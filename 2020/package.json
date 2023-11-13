@@ -1,0 +1,52 @@
+{
+  "name": "aoc-2020",
+  "version": "1.0.0",
+  "repository": {
+    "url": "https://github.com/kbraun9118/aoc-2020"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .ts",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "day01": "ts-node ./src/day_01/index.ts",
+    "day02": "ts-node ./src/day_02/index.ts",
+    "day03": "ts-node ./src/day_03/index.ts",
+    "day04": "ts-node ./src/day_04/index.ts",
+    "day05": "ts-node ./src/day_05/index.ts",
+    "day06": "ts-node ./src/day_06/index.ts",
+    "day07": "ts-node ./src/day_07/index.ts",
+    "day08": "ts-node ./src/day_08/index.ts",
+    "day09": "ts-node ./src/day_09/index.ts",
+    "day10": "ts-node ./src/day_10/index.ts",
+    "day11": "ts-node ./src/day_11/index.ts",
+    "day12": "ts-node ./src/day_12/index.ts",
+    "day13": "ts-node ./src/day_13/index.ts",
+    "day14": "ts-node ./src/day_14/index.ts",
+    "day15": "ts-node ./src/day_15/index.ts",
+    "day16": "ts-node ./src/day_16/index.ts",
+    "day17": "ts-node ./src/day_17/index.ts",
+    "day18": "ts-node ./src/day_18/index.ts",
+    "day19": "ts-node ./src/day_19/index.ts"
+  },
+  "keywords": [],
+  "author": "kbraun9118 (Kurt Braun)",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-typescript": "^7.12.7",
+    "babel-jest": "^26.6.3",
+    "@types/jest": "^26.0.19",
+    "@types/long": "^4.0.1",
+    "@types/node": "^14.14.10",
+    "@typescript-eslint/eslint-plugin": "^4.9.0",
+    "@typescript-eslint/parser": "^4.9.0",
+    "eslint": "^7.14.0",
+    "jest": "^26.6.3",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.1.2"
+  },
+  "dependencies": {
+    "long": "^4.0.0"
+  }
+}

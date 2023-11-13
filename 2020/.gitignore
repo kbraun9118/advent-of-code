@@ -1,0 +1,7 @@
+# IntelliJ specific files
+.idea/
+**.iml
+
+# TS/JS files
+node_modules/
+
