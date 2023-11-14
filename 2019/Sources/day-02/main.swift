@@ -1,0 +1,3 @@
+import AocLib
+
+hello()

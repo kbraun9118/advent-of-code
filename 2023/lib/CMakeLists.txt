@@ -1,0 +1,1 @@
+add_library(lib person/Person.h person/Person.cpp)
