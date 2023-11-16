@@ -1,2 +1,2 @@
 (library
- (name Common))
+ (name Lib))

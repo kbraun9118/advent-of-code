@@ -11,7 +11,7 @@ let part_2 lines =
   List.map calculate_fuel_additional lines |> List.fold_left ( + ) 0
 
 let () =
-  let lines = Common.get_input_lines "01" |> List.map int_of_string in
+  let lines = Lib.get_input_lines "01" |> List.map int_of_string in
   let () = Printf.printf "Part 1: %d\n" @@ part_1 lines in
   let () = Printf.printf "Part 2: %d\n" @@ part_2 lines in
   ()

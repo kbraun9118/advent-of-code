@@ -1,3 +1,5 @@
+module IntCode = Intcode
+
 let get_lines file = 
   let lines = In_channel.input_lines @@ In_channel.open_text file in
   let rec remove_end_newline lines = 
