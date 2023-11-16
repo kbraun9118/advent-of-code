@@ -1,4 +1,6 @@
-// The Swift Programming Language
-// https://docs.swift.org/swift-book
+import Foundation
+import AocLib
 
-print("Hello, world!")
+let lines = readInputFile("day-01")
+
+print("\(lines)")
