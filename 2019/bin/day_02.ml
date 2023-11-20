@@ -19,6 +19,6 @@ let part_2 input =
 
 let () =
   let input = Lib.get_input_lines "02" |> List.hd in
-  let () = Printf.printf "Part 1: %s\n" @@ part_1 input in
-  let () = Printf.printf "Part 2: %s\n" @@ part_2 input in
+  let () = Printf.printf "Part 1: %d\n" @@ part_1 input in
+  let () = Printf.printf "Part 2: %d\n" @@ part_2 input in
   ()
