@@ -3,6 +3,7 @@ module WireBoard : sig
 
   val create : string list -> t
   val intersections : t -> (int * int) Seq.t
+  val distance_to_intersections : string list -> t -> int
 end = struct
   module IntTuple = struct
     type t = int * int
@@ -79,36 +80,47 @@ end = struct
     |> Seq.filter (fun (_, occurances) -> IntSet.cardinal occurances > 1)
     |> Seq.map fst
 
-  let distance_to_intersections instructions board = 
-    let instructions = List.map Instruction.create instructions in
-    let left = List.hd instructions in
-    let right = List.hd @@ List.tl instructions in
-    let intersections = intersections board in
-    let distance_to_intersection instructions coord board = 
-      match instructions with
-      | [] -> failwith "Cannot find intersection"
-      | instruction :: tl -> 
-          let seq = Instruction.to_seq_from_point coord
-          match Seq.find_index (fun )
-      in
-    ()
-end
+  let rec path_list point instructions =
+    match instructions with
+    | [] -> []
+    | instruction :: tl ->
+        let instructions =
+          Instruction.to_seq_from_point point instruction |> List.of_seq
+        in
+        let next = List.rev instructions |> List.hd in
+        instructions @ path_list next tl
 
+  let distance_to_intersections instructions board =
+    let instructions = List.map Instruction.create instructions in
+    let left =
+      List.hd instructions
+      |> path_list (0, 0)
+      |> List.mapi (fun i ins -> (i, ins))
+    in
+    let right =
+      List.hd @@ List.tl instructions
+      |> path_list (0, 0)
+      |> List.mapi (fun i ins -> (i, ins))
+    in
+    let intersections = intersections board |> List.of_seq in
+    let intersection_mapper intersection =
+      let li, _ = List.find (fun (_, coord) -> intersection = coord) left in
+      let ri, _ = List.find (fun (_, coord) -> intersection = coord) right in
+      li + ri + 2
+    in
+    let intersections_length = List.map intersection_mapper intersections in
+    List.fold_left min Int.max_int intersections_length
+end
 
 let part_1 board =
   WireBoard.intersections board
   |> Seq.fold_left (fun acc (x, y) -> min acc (abs x + abs y)) Int.max_int
 
-let part_2 board instructions =
-  List.mapi
-    (fun i instructions ->
-      WireBoard.first_intersection_along instructions i board)
-    instructions
-  |> List.fold_left ( + ) 0
+let part_2 = WireBoard.distance_to_intersections
 
 let () =
-  let lines = Lib.get_test_lines "03" in
+  let lines = Lib.get_input_lines "03" in
   let board = WireBoard.create lines in
   let () = Printf.printf "Part 1: %d\n" (part_1 board) in
-  let () = Printf.printf "Part 2: %d\n" (part_2 board lines) in
+  let () = Printf.printf "Part 2: %d\n" (part_2 lines board) in
   ()
