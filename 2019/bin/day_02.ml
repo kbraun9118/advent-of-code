@@ -1,6 +1,6 @@
-let run_int_code noun verb nums =
+let run_int_code noun verb input =
   let open Lib in
-  IntCode.create nums
+  IntCode.create input
   |> IntCode.replace_value 1 noun
   |> IntCode.replace_value 2 verb
   |> IntCode.execute |> IntCode.return_code
@@ -18,10 +18,7 @@ let part_2 input =
   (100 * noun) + verb
 
 let () =
-  let input =
-    Lib.get_input_lines "02" |> List.hd |> String.split_on_char ','
-    |> List.map int_of_string
-  in
-  let () = Printf.printf "Part 1: %d\n" @@ part_1 input in
-  let () = Printf.printf "Part 2: %d\n" @@ part_2 input in
+  let input = Lib.get_input_lines "02" |> List.hd in
+  let () = Printf.printf "Part 1: %s\n" @@ part_1 input in
+  let () = Printf.printf "Part 2: %s\n" @@ part_2 input in
   ()
