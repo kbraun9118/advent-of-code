@@ -11,15 +11,12 @@ let get_lines file =
   remove_end_newline lines
 
 let get_input_lines day =
-  get_lines @@ Printf.sprintf "./input/day-%s/input.txt" day
+  get_lines @@ Printf.sprintf "./input/day_%s/input.txt" day
 
 let get_test_lines day =
-  get_lines @@ Printf.sprintf "./input/day-%s/test.txt" day
+  get_lines @@ Printf.sprintf "./input/day_%s/test.txt" day
 
 let split_once delimiter input =
   match String.split_on_char delimiter input with
   | [ left; right ] -> (left, right)
   | _ -> failwith ("Cannot split once: " ^ input)
-
-(* let min_by min_f default list =  *)
-(*   List.fold_left (fun acc next -> ) *)
