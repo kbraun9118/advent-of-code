@@ -6,6 +6,8 @@ module OrbitalMap : sig
   (* val add_to_map : string -> t -> unit *)
   val create : string list -> t
   val previous : t -> t option
+  val to_list : t -> t list
+  val id : t -> string
 end = struct
   module Stringtbl = Hashtbl.Make (String)
 
@@ -54,10 +56,21 @@ end = struct
   let previous map =
     let open Orbit in
     map.previous
+
+  let rec to_list map =
+    let open Orbit in
+    map
+    :: (Stringtbl.to_seq_values map.satelites
+       |> List.of_seq |> List.map to_list |> List.flatten)
+
+  let id map =
+    let open Orbit in
+    map.id
 end
 
 let () =
   let lines = Lib.get_test_lines "06" in
-  let _map = OrbitalMap.create lines in
-  let _prev = OrbitalMap.previous _map in
+  let map = OrbitalMap.create lines in
+  let _previous = OrbitalMap.previous map in
+  OrbitalMap.to_list map |> List.map OrbitalMap.id |> List.iter print_endline;
   ()
