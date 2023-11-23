@@ -5,11 +5,12 @@ module OrbitalMap : sig
 
   (* val add_to_map : string -> t -> unit *)
   val create : string list -> t
-  val previous : t -> t option
   val to_list : t -> t list
-  val count_orbits : t -> int
+  val orbit_path : t -> t list
+  val transfer_length : string -> string -> t -> int
 end = struct
   module Stringtbl = Hashtbl.Make (String)
+  module Stringset = Set.Make (String)
 
   module Orbit = struct
     type t = { id : string; previous : t option; satelites : t Stringtbl.t }
@@ -27,30 +28,39 @@ end = struct
           |> Seq.filter_map (find id)
           |> Seq.uncons |> Option.map fst
       | Some body -> Some body
+
+    let id orbit = orbit.id
   end
 
   type t = Orbit.t
 
-  let find_body id map =
+  let find_body body map =
     let open Orbit in
-    if map.id = id then map
-    else
-      find id map |> Option.to_result ~none:()
-      |> Result.map_error (fun _ -> failwith ("No orbit found with id: " ^ id))
-      |> Result.get_ok
+    if map.id = body then Some map else find body map
 
   let add_to_map body satelite map =
     let body = find_body body map in
-    Orbit.add_to_orbit body (Orbit.create satelite)
+    Option.map
+      (fun body -> Orbit.add_to_orbit body (Orbit.create satelite))
+      body
 
   let create lines =
     let lines = List.map (Lib.split_once ')') lines in
     let root, satelite = List.hd lines in
     let map = Orbit.create root in
-    add_to_map root satelite map;
-    (* |> Seq.iter (fun _x -> ()); *)
-    let add_satelites (body, satelite) = add_to_map body satelite map in
-    List.iter add_satelites (List.tl lines);
+    add_to_map root satelite map |> Option.get;
+    let rec create failed lines =
+      match lines with
+      | (body, satelite) :: tl -> (
+          Printf.printf "Adding: %s\n" satelite;
+          match add_to_map body satelite map with
+          | Some () -> create failed tl
+          | None -> create ((body, satelite) :: failed) tl)
+      | [] -> (
+          Printf.printf "Failed Length: %d\n" (List.length failed);
+          match failed with [] -> () | failed -> create [] failed)
+    in
+    create [] lines;
     map
 
   let previous map =
@@ -63,21 +73,33 @@ end = struct
     :: (Stringtbl.to_seq_values map.satelites
        |> List.of_seq |> List.map to_list |> List.flatten)
 
-  let count_orbits (map : Orbit.t) =
-    let rec count_orbits counter map =
-      match previous map with
-      | Some previous -> count_orbits (counter + 1) previous
-      | None -> counter
+  let rec orbit_path map =
+    match previous map with
+    | Some previous -> previous :: orbit_path previous
+    | None -> []
+
+  let id = Orbit.id
+
+  let transfer_length from too map =
+    let from =
+      find_body from map |> Option.get |> orbit_path |> List.map id
+      |> Stringset.of_list
     in
-    count_orbits 0 map
+    let too =
+      find_body too map |> Option.get |> orbit_path |> List.map id
+      |> Stringset.of_list
+    in
+    (Stringset.diff from too |> Stringset.to_list)
+    @ (Stringset.diff too from |> Stringset.to_list)
+    |> List.length
 end
 
 let () =
-  let lines = Lib.get_test_lines "06" in
+  let lines = Lib.get_input_lines "06" in
   let map = OrbitalMap.create lines in
-  let _previous = OrbitalMap.previous map in
   OrbitalMap.to_list map
-  |> List.map OrbitalMap.count_orbits
-  |> List.fold_left ( + ) 0
+  |> List.map OrbitalMap.orbit_path
+  |> List.map List.length |> List.fold_left ( + ) 0
   |> Printf.printf "Part 1: %d\n";
+  Printf.printf "Part 2: %d\n" (OrbitalMap.transfer_length "YOU" "SAN" map);
   ()
