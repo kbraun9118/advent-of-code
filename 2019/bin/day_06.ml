@@ -1,9 +1,6 @@
 module OrbitalMap : sig
   type t
 
-  (* val find_body : string -> t -> t *)
-
-  (* val add_to_map : string -> t -> unit *)
   val create : string list -> t
   val to_list : t -> t list
   val orbit_path : t -> t list
@@ -46,19 +43,17 @@ end = struct
 
   let create lines =
     let lines = List.map (Lib.split_once ')') lines in
-    let root, satelite = List.hd lines in
+    let root, satelite = List.find (fun (body, _) -> body = "COM") lines in
+    let lines = List.filter (fun (body, _) -> body <> "COM") lines in
     let map = Orbit.create root in
     add_to_map root satelite map |> Option.get;
     let rec create failed lines =
       match lines with
       | (body, satelite) :: tl -> (
-          Printf.printf "Adding: %s\n" satelite;
           match add_to_map body satelite map with
           | Some () -> create failed tl
           | None -> create ((body, satelite) :: failed) tl)
-      | [] -> (
-          Printf.printf "Failed Length: %d\n" (List.length failed);
-          match failed with [] -> () | failed -> create [] failed)
+      | [] -> ( match failed with [] -> () | failed -> create [] failed)
     in
     create [] lines;
     map
