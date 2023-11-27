@@ -12,9 +12,17 @@ let combinations min max =
   in
   combinations (List.of_seq nums)
 
+module AmpCircuit : sig
+  type t
+end = struct
+  type t = Lib.IntCode.t array
+
+  let create input = Array.init 7 (fun _ -> Lib.IntCode.create input)
+end
+
 let () =
   let combos =
-    combinations 0 2 |> List.map (fun xs -> List.map string_of_int xs)
+    combinations 0 4 |> List.map (fun xs -> List.map string_of_int xs)
   in
   let combos =
     List.map
