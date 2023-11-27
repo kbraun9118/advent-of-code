@@ -20,3 +20,5 @@ let split_once delimiter input =
   match String.split_on_char delimiter input with
   | [ left; right ] -> (left, right)
   | _ -> failwith ("Cannot split once: " ^ input)
+
+let min_list_by_key f = List.fold_left (fun acc next -> if min (f acc) (f next) = f acc then acc else next)
