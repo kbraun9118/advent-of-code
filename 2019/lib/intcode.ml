@@ -58,7 +58,6 @@ let push_input input intcode =
 let clear_output intcode = { intcode with output = "" }
 let is_complete intcode = intcode.complete
 
-
 let rec execute_until_output intcode =
   let opcode, params =
     parse_op_code intcode.instructions.(intcode.instruction_pointer)
@@ -145,7 +144,7 @@ let rec execute_until_output intcode =
            intcode.instructions.(intcode.instruction_pointer)
            intcode.instruction_pointer
 
-let rec execute intcode = 
+let rec execute intcode =
   let intcode = execute_until_output intcode in
   if is_complete intcode then intcode else execute intcode
 
