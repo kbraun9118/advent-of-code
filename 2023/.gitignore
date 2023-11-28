@@ -7,3 +7,4 @@ CMakeFiles/
 **/liblib.a
 **/day_*
 build/
+.cache/
