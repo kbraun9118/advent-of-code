@@ -1,10 +1,4 @@
 .idea/
 cmake-build-debug/
-**/cmake_install.cmake
-**/Makefile
-**/CMakeCache.txt
-CMakeFiles/
-**/liblib.a
-**/day_*
 build/
 .cache/
