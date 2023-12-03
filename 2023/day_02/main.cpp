@@ -1,6 +1,4 @@
 #include "lib/lib.hpp"
-#include <iostream>
-#include <ostream>
 #include <string>
 
 class reveal {

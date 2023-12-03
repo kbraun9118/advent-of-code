@@ -1,8 +1,6 @@
 #include "lib/lib.hpp"
 #include <cctype>
 #include <cstdlib>
-#include <iostream>
-#include <ostream>
 #include <string>
 #include <vector>
 
