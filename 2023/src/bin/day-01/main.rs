@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use aoc_2023::{print_part_1, print_part_2, read_input_lines};
 
 fn part_1(lines: &Vec<String>) -> u32 {
@@ -14,8 +16,63 @@ fn part_1(lines: &Vec<String>) -> u32 {
 }
 
 fn part_2(lines: &Vec<String>) -> u32 {
-    match 
-    0
+    let number_map = HashMap::from([
+        ("one", 1),
+        ("two", 2),
+        ("three", 3),
+        ("four", 4),
+        ("five", 5),
+        ("six", 6),
+        ("seven", 7),
+        ("eight", 8),
+        ("nine", 9),
+    ]);
+    let find_start = |line: &String| {
+        for i in 0..line.len() {
+            if line.chars().nth(i).unwrap().is_numeric() {
+                return line
+                    .chars()
+                    .nth(i)
+                    .unwrap()
+                    .to_string()
+                    .parse::<u32>()
+                    .unwrap();
+            }
+            for (key, value) in &number_map {
+                if line[i..].starts_with(key) {
+                    return *value;
+                }
+            }
+        }
+        0
+    };
+    let find_end = |line: &String| {
+        for i in (0..line.len()).rev() {
+            if line.chars().nth(i).unwrap().is_numeric() {
+                return line
+                    .chars()
+                    .nth(i)
+                    .unwrap()
+                    .to_string()
+                    .parse::<u32>()
+                    .unwrap();
+            }
+            for (key, value) in &number_map {
+                if line[i..].starts_with(key) {
+                    return *value;
+                }
+            }
+        }
+        0
+    };
+    lines
+        .iter()
+        .map(|line| {
+            let start = find_start(line);
+            let end = find_end(line);
+            start * 10 + end
+        })
+        .sum()
 }
 
 fn main() {
