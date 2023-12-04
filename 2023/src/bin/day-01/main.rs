@@ -1,6 +1,6 @@
-use aoc_2023::{read_input_lines, print_part_1};
+use aoc_2023::{print_part_1, print_part_2, read_input_lines};
 
-fn part_1(lines: Vec<String>) -> u32 {
+fn part_1(lines: &Vec<String>) -> u32 {
     lines
         .iter()
         .map(|line| {
@@ -13,9 +13,15 @@ fn part_1(lines: Vec<String>) -> u32 {
         .sum()
 }
 
+fn part_2(lines: &Vec<String>) -> u32 {
+    match 
+    0
+}
+
 fn main() {
     let lines = read_input_lines("01");
-    print_part_1(part_1(lines));
+    print_part_1(part_1(&lines));
+    print_part_2(part_2(&lines));
 }
 
 #[cfg(test)]
@@ -32,6 +38,22 @@ treb7uchet"#
             .map(|s| s.to_string())
             .collect::<Vec<_>>();
 
-        assert_eq!(part_1(input), 142);
+        assert_eq!(part_1(&input), 142);
+    }
+
+    #[test]
+    fn test_part_2() {
+        let input = r#"two1nine
+eightwothree
+abcone2threexyz
+xtwone3four
+4nineeightseven2
+zoneight234
+7pqrstsixteen"#
+            .lines()
+            .map(|s| s.to_string())
+            .collect::<Vec<_>>();
+
+        assert_eq!(part_2(&input), 281);
     }
 }
