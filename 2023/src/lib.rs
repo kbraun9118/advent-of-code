@@ -20,3 +20,15 @@ pub fn print_part_1<T: Display>(part_1: T) {
 pub fn print_part_2<T: Display>(part_2: T) {
     println!("Part 2: {}", part_2);
 }
+
+#[derive(Debug, Default, PartialEq, Eq, Hash, Clone, Copy)]
+pub struct Coord {
+    pub x: u32,
+    pub y: u32,
+}
+
+impl From<(u32, u32)> for Coord {
+    fn from((x, y): (u32, u32)) -> Self {
+        Self { x, y }
+    }
+}
