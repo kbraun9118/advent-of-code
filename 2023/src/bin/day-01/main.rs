@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use aoc_2023::{print_part_1, print_part_2, read_input_lines};
+use aoc::{print_part_1, print_part_2, read_input_lines};
 
 fn part_1(lines: &Vec<String>) -> u32 {
     lines
