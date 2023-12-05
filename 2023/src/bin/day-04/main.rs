@@ -48,6 +48,7 @@ fn part_2(cards: &Vec<Card>) -> u32 {
             for j in i + 1..=i + card {
                 copies[j] += 1 + copies[i];
             }
+            println!("{copies:#?}");
         }
 
         sum += 1 + copies[i] as u32
