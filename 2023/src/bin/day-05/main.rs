@@ -1,3 +1,5 @@
+use rayon::prelude::*;
+
 struct ConversionMap {
     conversions: Vec<Conversion>,
 }
@@ -91,10 +93,29 @@ fn part_1(almanac: &Almanac) -> usize {
         .unwrap()
 }
 
+fn part_2(almanac: &Almanac) -> usize {
+    almanac
+        .seeds
+        .chunks(2)
+        .map(|range| range[0]..range[0] + range[1])
+        .par_bridge()
+        .flat_map(|range| {
+            range.par_bridge().map(|seed| {
+                almanac
+                    .conversion_maps
+                    .iter()
+                    .fold(seed, |acc, next| next.convert(acc))
+            })
+        })
+        .min()
+        .unwrap()
+}
+
 fn main() {
     let almanac: Almanac = aoc::read_input_lines("05").into();
 
     aoc::print_part_1(part_1(&almanac));
+    aoc::print_part_2(part_2(&almanac));
 }
 
 #[cfg(test)]
@@ -145,5 +166,10 @@ humidity-to-location map:
     #[test]
     fn test_part_1() {
         assert_eq!(part_1(&test_input()), 35);
+    }
+
+    #[test]
+    fn test_part_2() {
+        assert_eq!(part_2(&test_input()), 46);
     }
 }
