@@ -1,3 +1,5 @@
+use std::ops::{Range, RangeBounds};
+
 use rayon::prelude::*;
 
 struct ConversionMap {
@@ -54,6 +56,20 @@ struct Almanac {
     conversion_maps: Vec<ConversionMap>,
 }
 
+fn combine_range<T: PartialOrd>(range: Range<T>, other: Range<T>) -> Vec<Range<T>> {
+    if range.contains(&other.start) && !range.contains(&other.end) {
+        vec![range.start..other.end]
+    } else if range.contains(&other.start) && range.contains(&other.end) {
+        vec![range]
+    } else if other.contains(&range.start) && !other.contains(&range.end) {
+        vec![other.start..range.end]
+    } else if other.contains(&range.start) && other.contains(&range.end) {
+        vec![other]
+    } else {
+        vec![range, other]
+    }
+}
+
 impl From<Vec<String>> for Almanac {
     fn from(value: Vec<String>) -> Self {
         let chunks = value.split(|s| s == "").collect::<Vec<_>>();
@@ -98,14 +114,21 @@ fn part_2(almanac: &Almanac) -> usize {
         .seeds
         .chunks(2)
         .map(|range| range[0]..range[0] + range[1])
+        .enumerate()
         .par_bridge()
-        .flat_map(|range| {
-            range.par_bridge().map(|seed| {
-                almanac
-                    .conversion_maps
-                    .iter()
-                    .fold(seed, |acc, next| next.convert(acc))
-            })
+        .flat_map(|(i, range)| {
+            println!("Starting range: {i}");
+            let item = range
+                .par_bridge()
+                .map(|seed| {
+                    almanac
+                        .conversion_maps
+                        .iter()
+                        .fold(seed, |acc, next| next.convert(acc))
+                })
+                .min();
+            println!("Finished range: {i}");
+            item
         })
         .min()
         .unwrap()
