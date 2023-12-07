@@ -52,7 +52,7 @@ fn part_2(input: &Vec<String>) -> usize {
         .map(|s| s.replace(" ", ""))
         .collect::<Vec<_>>();
 
-    let race = Race::from((split[0].trim(), split[1].trim()));
+    let race = Race::from((split[0].as_str(), split[1].as_str()));
 
     race.possible_wins()
 }
