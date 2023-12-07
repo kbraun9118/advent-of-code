@@ -25,17 +25,17 @@ impl From<char> for Card {
 }
 
 impl Card {
-    fn special_ordering(&self,other: &Self, is_joker: bool) -> Option<std::cmp::Ordering> {
+    fn special_ordering(&self, other: &Self, is_joker: bool) -> Option<std::cmp::Ordering> {
         if !is_joker {
             self.partial_cmp(other)
         } else {
-            use Card::*;
             use std::cmp::Ordering::*;
+            use Card::*;
             Some(match (*self, other) {
                 (Jack, Jack) => Equal,
                 (Jack, _) => Less,
                 (_, Jack) => Greater,
-                _ => self.partial_cmp(other).unwrap()
+                _ => self.partial_cmp(other).unwrap(),
             })
         }
     }
@@ -87,10 +87,10 @@ impl Hand {
             if card_occurance.values().any(|c| *c + joker_count == 5) {
                 7
             } else if card_occurance.values().any(|c| *c + joker_count == 4) {
-                println!("Four {:?}", self.cards);
                 6
-            } else if card_occurance.values().any(|c| *c + joker_count == 3)
-                && card_occurance.values().any(|c| *c == 2)
+            } else if (card_occurance.values().any(|c| *c == 3)
+                && card_occurance.values().any(|c| *c == 2))
+                || (joker_count == 1 && card_occurance.values().filter(|c| **c == 2).count() == 2)
             {
                 5
             } else if card_occurance.values().any(|c| *c + joker_count == 3) {
@@ -137,7 +137,9 @@ impl PartialOrd for Hand {
                 .iter()
                 .zip(other.cards.iter())
                 .find(|(s, o)| s != o)
-                .map_or(Some(std::cmp::Ordering::Equal), |(s, o)| s.special_ordering(o, self.joker))
+                .map_or(Some(std::cmp::Ordering::Equal), |(s, o)| {
+                    s.special_ordering(o, self.joker)
+                })
         } else {
             self_rank.partial_cmp(&other_rank)
         }
@@ -162,10 +164,7 @@ fn part_1(hands: &Vec<Hand>) -> u32 {
 }
 
 fn part_2(hands: &Vec<Hand>) -> u32 {
-    let mut hands = hands
-        .iter()
-        .map(|h| h.into_joker())
-        .collect::<Vec<_>>();
+    let mut hands = hands.iter().map(|h| h.into_joker()).collect::<Vec<_>>();
 
     hands.sort();
 
@@ -210,11 +209,14 @@ QQQJA 483"#
     #[test]
     fn test_part_2() {
         assert_eq!(part_2(&get_test_input()), 5905);
-        assert!(false);
     }
 
     #[test]
     fn test_joker_compare() {
-        assert!(Hand::from("JKKK2 0".to_string()).into_joker() < Hand::from("QQQQ2 0".to_string()).into_joker())
+        assert!(Card::Ace > Card::King);
+        assert!(
+            Hand::from("JKKK2 0".to_string()).into_joker()
+                < Hand::from("QQQQ2 0".to_string()).into_joker()
+        )
     }
 }
