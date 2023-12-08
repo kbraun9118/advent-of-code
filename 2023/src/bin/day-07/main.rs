@@ -84,7 +84,7 @@ impl Hand {
             }
         } else {
             let joker_count = card_occurance.remove(&Card::Jack).unwrap_or(0);
-            if card_occurance.values().any(|c| *c + joker_count == 5) {
+            if card_occurance.values().any(|c| *c + joker_count == 5) || joker_count == 5 {
                 7
             } else if card_occurance.values().any(|c| *c + joker_count == 4) {
                 6
