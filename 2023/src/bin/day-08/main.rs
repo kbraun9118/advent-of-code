@@ -68,21 +68,21 @@ fn part_2(network: &Network, directions: &Vec<Direction>) -> u64 {
     let mut path_lengths = vec![];
 
     for path in paths {
-        let mut current_path = vec![];
+        let mut length = 0;
         let mut current = path.to_string();
-        while !current_path.contains(&current) {
-            let mut directions = directions.clone();
+        let mut directions = directions.clone();
+        while !current.ends_with("Z") {
             if let Some(direction) = directions.next() {
-                current_path.push(current.clone());
+                length += 1;
                 current = network.find_next(current, *direction);
             }
         }
-        path_lengths.push(current_path.len());
+        path_lengths.push(length);
     }
 
     path_lengths
         .into_iter()
-        .fold(1u64, |acc, next| acc * next as u64)
+        .fold(1u64, |acc, next| num::integer::lcm(acc, next as u64))
 }
 
 fn parse_input(input: Vec<String>) -> (Network, Vec<Direction>) {
