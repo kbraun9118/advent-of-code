@@ -56,30 +56,33 @@ fn part_1(network: &Network, directions: &Vec<Direction>) -> u32 {
     steps
 }
 
-fn part_2(network: &Network, directions: &Vec<Direction>) -> u32 {
-    let mut current = network
+fn part_2(network: &Network, directions: &Vec<Direction>) -> u64 {
+    let paths = network
         .0
         .keys()
         .filter(|k| k.ends_with("A"))
         .map(String::clone)
         .collect::<Vec<String>>();
-    let mut steps = 0;
-    let mut directions = directions.iter().cycle();
+    // let mut steps = 0;
+    let directions = directions.iter().cycle();
+    let mut path_lengths = vec![];
 
-    while !current.iter().all(|s| s.ends_with("Z")) {
-        if steps % 100_000 == 0 {
-            println!("Steps: {steps}");
+    for path in paths {
+        let mut current_path = vec![];
+        let mut current = path.to_string();
+        while !current_path.contains(&current) {
+            let mut directions = directions.clone();
+            if let Some(direction) = directions.next() {
+                current_path.push(current.clone());
+                current = network.find_next(current, *direction);
+            }
         }
-        if let Some(direction) = directions.next() {
-            current = current
-                .into_iter()
-                .map(|c| network.find_next(c, *direction))
-                .collect();
-            steps += 1;
-        }
+        path_lengths.push(current_path.len());
     }
 
-    steps
+    path_lengths
+        .into_iter()
+        .fold(1u64, |acc, next| acc * next as u64)
 }
 
 fn parse_input(input: Vec<String>) -> (Network, Vec<Direction>) {
