@@ -165,20 +165,21 @@ fn part_2(grid: &mut Grid) -> usize {
         let mut next = HashSet::new();
         for coord in current {
             grid.0[coord.y][coord.x] = Pipe::Visited;
-            grid.emtpy_neighbors(coord)
-                .into_iter()
-                .for_each(|c| next.insert(c.clone()));
+            grid.emtpy_neighbors(coord).into_iter().for_each(|c| {
+                next.insert(c);
+            });
         }
         current = next;
     }
 
-    0
+    grid.0.iter().flatten().filter(|p| p == &&Pipe::Empty).count()
 }
 
 fn main() {
-    let grid = Grid::from(aoc::read_input_lines("10"));
+    let mut grid = Grid::from(aoc::read_input_lines("10"));
 
     aoc::print_part_1(part_1(&grid));
+    aoc::print_part_2(part_2(&mut grid));
 }
 
 #[cfg(test)]
