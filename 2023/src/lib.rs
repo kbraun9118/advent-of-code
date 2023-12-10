@@ -22,13 +22,13 @@ pub fn print_part_2<T: Display>(part_2: T) {
 }
 
 #[derive(Debug, Default, PartialEq, Eq, Hash, Clone, Copy)]
-pub struct Coord {
-    pub x: u32,
-    pub y: u32,
+pub struct Coord<T> {
+    pub x: T,
+    pub y: T,
 }
 
-impl From<(u32, u32)> for Coord {
-    fn from((x, y): (u32, u32)) -> Self {
+impl<T> From<(T, T)> for Coord<T> {
+    fn from((x, y): (T, T)) -> Self {
         Self { x, y }
     }
 }

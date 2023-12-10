@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-use aoc::Coord;
+type Coord = aoc::Coord<u32>;
 
 #[derive(Debug)]
 struct PartList {
