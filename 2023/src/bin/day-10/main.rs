@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::{collections::HashSet, fmt::Display};
 
 type Coord = aoc::Coord<usize>;
 
@@ -123,6 +123,32 @@ impl From<Vec<String>> for Grid {
     }
 }
 
+impl Display for Grid {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for line in self.0.iter() {
+            for p in line {
+                write!(
+                    f,
+                    "{}",
+                    match p {
+                        Pipe::Start => 'S',
+                        Pipe::TopLeft => 'F',
+                        Pipe::TopRight => '7',
+                        Pipe::BottomRight => 'J',
+                        Pipe::BottomLeft => 'L',
+                        Pipe::Horizontal => '-',
+                        Pipe::Vertical => '|',
+                        Pipe::Empty => '.',
+                        Pipe::Visited => 'O',
+                    }
+                )?;
+            }
+            write!(f, "\n")?;
+        }
+        Ok(())
+    }
+}
+
 fn part_1(grid: &Grid) -> usize {
     grid.find_loop().len() / 2
 }
@@ -170,9 +196,14 @@ fn part_2(grid: &mut Grid) -> usize {
             });
         }
         current = next;
+        println!("{grid}")
     }
 
-    grid.0.iter().flatten().filter(|p| p == &&Pipe::Empty).count()
+    grid.0
+        .iter()
+        .flatten()
+        .filter(|p| p == &&Pipe::Empty)
+        .count()
 }
 
 fn main() {
