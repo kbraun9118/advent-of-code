@@ -4,59 +4,94 @@ use std::fmt::Display;
 type Coord = aoc::Coord<usize>;
 
 #[derive(Debug)]
-struct Image(Vec<Vec<Object>>);
+struct Image {
+    grid: Vec<Vec<Object>>,
+    vertical_expansions: Vec<usize>,
+    horizontal_expansions: Vec<usize>,
+}
 
 impl Image {
-    fn expand(&self) -> Self {
-        let mut vertical_expanded = self
-            .0
+    fn distance(&self, from: Coord, to: Coord, expansion_factor: usize) -> usize {
+        let vertical_expansions_crossed = (from.x.min(to.x)..from.x.max(to.x))
+            .filter(|i| self.horizontal_expansions.contains(i))
+            .count();
+        let horizontal_expansions_crossed = (from.y.min(to.y)..from.y.max(to.y))
+            .filter(|i| self.vertical_expansions.contains(i))
+            .count();
+
+        (from.x.max(to.x) - from.x.min(to.x))
+            + (from.y.max(to.y) - from.y.min(to.y))
+            + (vertical_expansions_crossed * expansion_factor)
+            + (horizontal_expansions_crossed * expansion_factor)
+    }
+
+    fn all_pairs(&self) -> Vec<(Coord, Coord)> {
+        let coords = self
+            .grid
             .iter()
-            .map(|r| {
-                if r.iter().all(|o| o == &Object::Space) {
-                    vec![r.clone(), r.clone()]
-                } else {
-                    vec![r.clone()]
-                }
+            .enumerate()
+            .map(|(y, r)| {
+                r.iter()
+                    .enumerate()
+                    .filter(|(_, s)| **s == Object::Galaxy)
+                    .map(|(x, _)| Coord::from((x, y)))
+                    .collect::<Vec<_>>()
             })
             .flatten()
             .collect::<Vec<_>>();
 
-        let mut indecies_to_expand = vec![];
-
-        for x in 0..vertical_expanded[0].len() {
-            if vertical_expanded
-                .iter()
-                .map(|v| v[x].clone())
-                .all(|o| o == Object::Space)
-            {
-                indecies_to_expand.push(x);
-            }
-        }
-
-        for (i, x) in indecies_to_expand.iter().enumerate() {
-            for row in vertical_expanded.iter_mut() {
-                row.insert(i + x, Object::Space);
-            }
-        }
-
-        Self(vertical_expanded)
+        coords[0..coords.len() - 1]
+            .iter()
+            .enumerate()
+            .map(|(i, l)| {
+                coords[i + 1..]
+                    .iter()
+                    .filter(|o| l != *o)
+                    .map(|r| (l.clone(), r.clone()))
+                    .collect::<Vec<_>>()
+            })
+            .flatten()
+            .collect()
     }
 }
 
 impl From<Vec<String>> for Image {
     fn from(value: Vec<String>) -> Self {
-        Self(
-            value
+        let grid = value
+            .iter()
+            .map(|l| l.chars().map(Object::from).collect::<Vec<Object>>())
+            .collect::<Vec<_>>();
+
+        let vertical_expansions = grid
+            .iter()
+            .enumerate()
+            .filter(|(_, r)| r.iter().all(|o| *o == Object::Space))
+            .map(|(y, _)| y)
+            .collect();
+
+        let mut horizontal_expansions = vec![];
+
+        for x in 0..grid[0].len() {
+            if grid
                 .iter()
-                .map(|l| l.chars().map(Object::from).collect())
-                .collect(),
-        )
+                .map(|v| v[x].clone())
+                .all(|o| o == Object::Space)
+            {
+                horizontal_expansions.push(x);
+            }
+        }
+
+        Image {
+            grid,
+            vertical_expansions,
+            horizontal_expansions,
+        }
     }
 }
 
 impl Display for Image {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        for row in self.0.iter() {
+        for row in self.grid.iter() {
             for o in row {
                 write!(
                     f,
@@ -91,28 +126,35 @@ impl From<char> for Object {
 }
 
 fn part_1(image: &Image) -> usize {
-    let image = image.expand();
-    let coords = image
-        .0
-        .iter()
-        .enumerate()
-        .map(|(y, r)| {
-            r.iter()
-                .enumerate()
-                .filter(|(_, s)| **s == Object::Galaxy)
-                .map(|(x, _)| Coord::from((x, y)))
-                .collect::<Vec<_>>()
-        })
-        .flatten()
-        .collect::<Vec<_>>();
+    image
+        .all_pairs()
+        .into_iter()
+        .map(|(l, r)| image.distance(l, r, 1))
+        .sum()
+}
 
-    println!("{coords:#?}");
-
-    0
+fn part_2(image: &Image) -> usize {
+    image
+        .all_pairs()
+        .into_iter()
+        .map(|(l, r)| image.distance(l, r, 999_999))
+        .sum()
 }
 
 fn main() {
-    let input = r#"...#......
+    let map = Image::from(aoc::read_input_lines("11"));
+
+    aoc::print_part_1(part_1(&map));
+    aoc::print_part_2(part_2(&map));
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    fn get_test_input() -> Image {
+        Image::from(
+            r#"...#......
 .......#..
 #.........
 ..........
@@ -122,10 +164,25 @@ fn main() {
 ..........
 .......#..
 #...#....."#
-        .lines()
-        .map(String::from)
-        .collect::<Vec<_>>();
-    let map = Image::from(input);
+                .lines()
+                .map(String::from)
+                .collect::<Vec<_>>(),
+        )
+    }
 
-    aoc::print_part_1(part_1(&map));
+    #[test]
+    fn test_part_1() {
+        assert_eq!(part_1(&get_test_input()), 374);
+    }
+
+    #[test]
+    fn test_part_2() {
+        let image = get_test_input();
+        let part_2_test: usize = image
+            .all_pairs()
+            .into_iter()
+            .map(|(l, r)| image.distance(l, r, 99))
+            .sum();
+        assert_eq!(part_2_test, 8410);
+    }
 }
