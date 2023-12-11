@@ -32,7 +32,7 @@ impl From<char> for Pipe {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 enum Direction {
     Up,
     Down,
@@ -44,7 +44,7 @@ enum Direction {
 struct Grid(Vec<Vec<Pipe>>);
 
 impl Grid {
-    fn find_loop(&self) -> HashSet<Coord> {
+    fn find_loop(&self) -> Vec<Coord> {
         let mut current = self
             .0
             .iter()
@@ -58,10 +58,10 @@ impl Grid {
             .unwrap();
 
         let mut direction = Direction::Left;
-        let mut inner_loop = HashSet::new();
+        let mut inner_loop = vec![];
 
         while !inner_loop.contains(&current) {
-            inner_loop.insert(current);
+            inner_loop.push(current);
             let (next_coord, next_direction) = self.next(current, direction);
             current = next_coord;
             direction = next_direction;
@@ -166,26 +166,81 @@ fn part_2(grid: &mut Grid) -> usize {
         }
     }
 
-    let mut empty_perimeter: HashSet<Coord> = HashSet::new();
-    for y in 0..max_y {
-        if grid.0[y][0] == Pipe::Empty {
-            empty_perimeter.insert((0, y).into());
+    let mut direction = Direction::Right;
+    for Coord { x, y } in inner_loop.into_iter().rev() {
+        use Direction::*;
+        use Pipe::*;
+
+        let mut to_add = vec![];
+        // println!("Evaluating: {:?} {:?}", grid.0[y][x], direction.clone());
+        match (grid.0[y][x], direction.clone()) {
+            (Horizontal, Right) => {
+                to_add.push((x, y + 1));
+            }
+            (Horizontal, Left) => {
+                to_add.push((x, y - 1));
+            }
+            (Vertical, Up) => {
+                to_add.push((x + 1, y));
+            }
+            (Vertical, Down) => {
+                to_add.push((x - 1, y));
+            }
+            (TopRight, Right) => {
+                direction = Down;
+            }
+            (TopRight, Up) => {
+                direction = Left;
+                to_add.push((x + 1, y));
+                to_add.push((x, y - 1));
+            }
+            (BottomRight, Down) => {
+                direction = Left;
+            }
+            (BottomRight, Right) => {
+                direction = Up;
+                to_add.push((x, y + 1));
+                to_add.push((x + 1, y));
+            }
+            (BottomLeft, Left) => {
+                direction = Up;
+            }
+            (BottomLeft, Down) => {
+                direction = Right;
+                to_add.push((x - 1, y));
+                to_add.push((x, y + 1));
+            }
+            (TopLeft, Up) | (Start, Up) => {
+                direction = Right;
+            }
+            (TopLeft, Left) | (Start, Left) => {
+                direction = Down;
+                to_add.push((x, y - 1));
+                to_add.push((x - 1, y));
+            }
+            _ => panic!("invalid condition {:?} {:?}", grid.0[y][x], direction),
         }
-        if grid.0[y][max_x - 1] == Pipe::Empty {
-            empty_perimeter.insert((max_x - 1, y).into());
-        }
+
+        to_add.into_iter().for_each(|(x, y)| {
+            if grid.0[y][x] == Empty {
+                grid.0[y][x] = Visited;
+            }
+        })
     }
 
-    for x in 0..max_x {
-        if grid.0[0][x] == Pipe::Empty {
-            empty_perimeter.insert((x, 0).into());
-        }
-        if grid.0[max_y - 1][x] == Pipe::Empty {
-            empty_perimeter.insert((x, max_y - 1).into());
-        }
-    }
 
-    let mut current = empty_perimeter.clone();
+    let mut current = grid
+        .0
+        .iter()
+        .enumerate()
+        .map(|(y, row)| {
+            row.iter()
+                .enumerate()
+                .filter(|(_, c)| c == &&Pipe::Visited)
+                .map(move |(x, _)| Coord::from((x, y)))
+        })
+        .flatten()
+        .collect::<HashSet<_>>();
 
     while !current.is_empty() {
         let mut next = HashSet::new();
@@ -196,13 +251,12 @@ fn part_2(grid: &mut Grid) -> usize {
             });
         }
         current = next;
-        println!("{grid}")
     }
 
     grid.0
         .iter()
         .flatten()
-        .filter(|p| p == &&Pipe::Empty)
+        .filter(|p| p == &&Pipe::Visited)
         .count()
 }
 
