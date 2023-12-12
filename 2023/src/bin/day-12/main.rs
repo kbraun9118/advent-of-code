@@ -1,8 +1,8 @@
-use std::fmt::Display;
+use std::{collections::HashMap, fmt::Display};
 
-use rayon::prelude::*;
+type Cache = HashMap<Row, usize>;
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 enum Status {
     Operational,
     Damaged,
@@ -34,34 +34,13 @@ impl Display for Status {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone)]
 struct Row {
     springs: Vec<Status>,
     pattern: Vec<usize>,
 }
 
 impl Row {
-    fn is_valid(&self) -> bool {
-        let pattern = self
-            .springs
-            .split(|v| *v == Status::Operational)
-            .map(|s| s.len())
-            .filter(|l| *l != 0)
-            .collect::<Vec<_>>();
-
-        self.pattern == pattern
-    }
-
-    fn all_springs(&self) -> Vec<Row> {
-        all_springs(&self.springs)
-            .into_iter()
-            .map(|s| Row {
-                springs: s,
-                pattern: self.pattern.clone(),
-            })
-            .collect()
-    }
-
     fn expand(&self) -> Row {
         let pattern = self
             .pattern
@@ -110,40 +89,99 @@ impl From<String> for Row {
     }
 }
 
-fn all_springs(springs: &Vec<Status>) -> Vec<Vec<Status>> {
-    if let Some((i, _)) = springs
-        .iter()
-        .enumerate()
-        .find(|(_, s)| **s == Status::Unknown)
-    {
-        let mut damaged = springs.clone();
-        let mut operational = springs.clone();
-        damaged[i] = Status::Damaged;
-        operational[i] = Status::Operational;
-        vec![all_springs(&damaged), all_springs(&operational)]
-            .into_iter()
-            .flatten()
-            .collect()
-    } else {
-        vec![springs.clone()]
+fn solve(row: &Row, cache: &mut Cache) -> usize {
+    if cache.contains_key(row) {
+        return cache[row];
     }
+    if row.pattern.is_empty() {
+        if row
+            .springs
+            .iter()
+            .all(|s| *s == Status::Operational || *s == Status::Unknown)
+        {
+            cache.insert(row.clone(), 1);
+            return 1;
+        } else {
+            cache.insert(row.clone(), 0);
+            return 0;
+        }
+    }
+    if row.springs.starts_with(&[Status::Operational]) {
+        let ans = solve(
+            &Row {
+                springs: row.springs[1..].to_vec(),
+                pattern: row.pattern.clone(),
+            },
+            cache,
+        );
+        cache.insert(row.clone(), ans);
+        return ans;
+    }
+    if row.springs.starts_with(&[Status::Unknown]) {
+        let operational = row.springs[1..].to_vec();
+        let mut damaged = row.springs.clone();
+        damaged[0] = Status::Damaged;
+
+        let ans = solve(
+            &Row {
+                springs: operational,
+                pattern: row.pattern.clone(),
+            },
+            cache,
+        ) + solve(
+            &Row {
+                springs: damaged,
+                pattern: row.pattern.clone(),
+            },
+            cache,
+        );
+
+        cache.insert(row.clone(), ans);
+        return ans;
+    }
+    if row.springs.starts_with(&[Status::Damaged]) {
+        if row.springs.len() >= row.pattern[0] {
+            if row.springs[0..row.pattern[0]]
+                .iter()
+                .all(|s| *s == Status::Damaged || *s == Status::Unknown)
+            {
+                let springs = row.springs[row.pattern[0]..].to_vec();
+                let pattern = row.pattern[1..].to_vec();
+                let ans = solve(&Row { springs, pattern }, cache);
+                cache.insert(row.clone(), ans);
+                return ans;
+            } else {
+                let ans = solve(
+                    &Row {
+                        springs: row.springs[1..].to_vec(),
+                        pattern: row.pattern.clone(),
+                    },
+                    cache,
+                );
+                cache.insert(row.clone(), ans);
+                return ans;
+            }
+        } else {
+            cache.insert(row.clone(), 0);
+            return 0;
+        }
+    }
+
+    cache.insert(row.clone(), 0);
+    0
 }
+
 fn part_1(rows: &Vec<Row>) -> usize {
-    rows.iter()
-        .map(|r| r.all_springs().iter().filter(|s| s.is_valid()).count())
-        .sum()
+    let mut cache = Cache::new();
+    let mut ans = 0;
+    for row in rows {
+        ans += solve(&row, &mut cache);
+    }
+    ans
 }
 
 fn part_2(rows: &Vec<Row>) -> usize {
-    rows.par_iter()
-        .map(|r| r.expand())
-        .enumerate()
-        .inspect(|(i, _)| println!("Expanded: {}", i + 1))
-        .map(|(_, r)| r.all_springs().iter().filter(|s| s.is_valid()).count())
-        .enumerate()
-        .inspect(|(i, _)| println!("Calculated: {}", i + 1))
-        .map(|(_, c)| c)
-        .sum()
+    0
 }
 
 fn main() {
