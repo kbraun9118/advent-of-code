@@ -185,13 +185,17 @@ fn part_2(rows: &Vec<Row>) -> usize {
 }
 
 fn main() {
-    let rows = aoc::read_input_lines("12")
-        .into_iter()
-        .map(Row::from)
-        .collect::<Vec<_>>();
+    // let rows = aoc::read_input_lines("12")
+    //     .into_iter()
+    //     .map(Row::from)
+    //     .collect::<Vec<_>>();
+    //
+    // aoc::print_part_1(part_1(&rows));
+    // aoc::print_part_2(part_2(&rows));
+
+    let rows = vec![Row::from("???.### 1,1,3".to_string())];
 
     aoc::print_part_1(part_1(&rows));
-    aoc::print_part_2(part_2(&rows));
 }
 
 #[cfg(test)]
