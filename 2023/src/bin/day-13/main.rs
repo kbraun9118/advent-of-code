@@ -1,6 +1,6 @@
 type Grid = aoc::Grid<Terrain>;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 enum Terrain {
     Ash,
     Rock,
@@ -26,14 +26,10 @@ fn main() {
 #.#.##.#."#
         .lines()
         .map(String::from)
+        .map(|r| r.chars().map(Terrain::from).collect::<Vec<_>>())
         .collect::<Vec<_>>();
 
-    let grid = Grid::from(
-        input
-            .into_iter()
-            .map(|r| r.chars().map(Terrain::from).collect())
-            .collect::<Vec<_>>(),
-    );
+    let grid = Grid::new(input.len(), input[0].len(), |aoc::Coord {x, y}| input[y][x]);
 
     println!("{grid:#?}");
 }

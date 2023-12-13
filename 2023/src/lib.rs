@@ -43,17 +43,19 @@ pub struct Grid<T> {
     grid: Vec<T>,
 }
 
-impl<T: Default> Grid<T> {
-    pub fn new(height: usize, width: usize) -> Self {
+impl<T> Grid<T> {
+    pub fn new<F: Fn(Coord<usize>) -> T>(height: usize, width: usize, f: F)  -> Self {
         let mut grid = Vec::with_capacity(height * width);
-        for _ in 0..height * width {
-            grid.push(T::default());
+        for y in 0..height {
+            for x in 0..width {
+                grid.push(f(Coord { x, y}));
+            }
         }
         Self {
             height,
             width,
-            grid,
-        }
+            grid
+        }        
     }
 
     pub fn height(&self) -> usize {
@@ -79,7 +81,7 @@ impl<T: Default> Grid<T> {
 
         vec
     }
-    
+
     pub fn column(&self, index: usize) -> Vec<&T> {
         let mut vec = vec![];
         for y in 0..self.height {
@@ -87,6 +89,20 @@ impl<T: Default> Grid<T> {
         }
 
         vec
+    }
+}
+
+impl<T: Default> Grid<T> {
+    pub fn new_default(height: usize, width: usize) -> Self {
+        let mut grid = Vec::with_capacity(height * width);
+        for _ in 0..height * width {
+            grid.push(T::default());
+        }
+        Self {
+            height,
+            width,
+            grid,
+        }
     }
 }
 
