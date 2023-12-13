@@ -94,17 +94,17 @@ fn solve(row: &Row, cache: &mut Cache) -> usize {
         return cache[row];
     }
     if row.pattern.is_empty() {
-        if row
-            .springs
-            .iter()
-            .all(|s| *s == Status::Operational || *s == Status::Unknown)
-        {
-            cache.insert(row.clone(), 1);
-            return 1;
-        } else {
+        if row.springs.iter().any(|s| *s == Status::Damaged) {
             cache.insert(row.clone(), 0);
             return 0;
+        } else {
+            cache.insert(row.clone(), 1);
+            return 1;
         }
+    }
+    if row.springs.len() < row.pattern.iter().sum() {
+        cache.insert(row.clone(), 0);
+        return 0;
     }
     if row.springs.starts_with(&[Status::Operational]) {
         let ans = solve(
@@ -140,62 +140,60 @@ fn solve(row: &Row, cache: &mut Cache) -> usize {
         return ans;
     }
     if row.springs.starts_with(&[Status::Damaged]) {
-        if row.springs.len() >= row.pattern[0] {
-            if row.springs[0..row.pattern[0]]
-                .iter()
-                .all(|s| *s == Status::Damaged || *s == Status::Unknown)
+        if row.springs[0..row.pattern[0]]
+            .iter()
+            .all(|s| *s == Status::Damaged || *s == Status::Unknown)
+        {
+            if row.springs.len() == row.pattern[0] {
+                cache.insert(row.clone(), 1);
+                return 1;
+            }
+            if row.springs[row.pattern[0]] == Status::Operational
+                || row.springs[row.pattern[0]] == Status::Unknown
             {
-                let springs = row.springs[row.pattern[0]..].to_vec();
+                let springs = row.springs[row.pattern[0] + 1..].to_vec();
                 let pattern = row.pattern[1..].to_vec();
                 let ans = solve(&Row { springs, pattern }, cache);
                 cache.insert(row.clone(), ans);
                 return ans;
-            } else {
-                let ans = solve(
-                    &Row {
-                        springs: row.springs[1..].to_vec(),
-                        pattern: row.pattern.clone(),
-                    },
-                    cache,
-                );
-                cache.insert(row.clone(), ans);
-                return ans;
             }
-        } else {
-            cache.insert(row.clone(), 0);
-            return 0;
         }
+        cache.insert(row.clone(), 0);
+        return 0;
     }
 
+    // should never get here
     cache.insert(row.clone(), 0);
     0
 }
 
-fn part_1(rows: &Vec<Row>) -> usize {
-    let mut cache = Cache::new();
+fn part_1(rows: &Vec<Row>, cache: &mut Cache) -> usize {
     let mut ans = 0;
     for row in rows {
-        ans += solve(&row, &mut cache);
+        ans += solve(&row, cache);
+    }
+    // println!("{cache:#?})");
+    ans
+}
+
+fn part_2(rows: &Vec<Row>, cache: &mut Cache) -> usize {
+    let mut ans = 0;
+    for row in rows {
+        ans += solve(&row.expand(), cache);
     }
     ans
 }
 
-fn part_2(rows: &Vec<Row>) -> usize {
-    0
-}
-
 fn main() {
-    // let rows = aoc::read_input_lines("12")
-    //     .into_iter()
-    //     .map(Row::from)
-    //     .collect::<Vec<_>>();
-    //
-    // aoc::print_part_1(part_1(&rows));
-    // aoc::print_part_2(part_2(&rows));
+    let rows = aoc::read_input_lines("12")
+        .into_iter()
+        .map(Row::from)
+        .collect::<Vec<_>>();
 
-    let rows = vec![Row::from("???.### 1,1,3".to_string())];
+    let mut cache = Cache::new();
 
-    aoc::print_part_1(part_1(&rows));
+    aoc::print_part_1(part_1(&rows, &mut cache));
+    aoc::print_part_2(part_2(&rows, &mut cache));
 }
 
 #[cfg(test)]
@@ -217,11 +215,13 @@ mod test {
 
     #[test]
     fn test_part_1() {
-        assert_eq!(part_1(&get_test_input()), 21);
+        let mut cache = Cache::new();
+        assert_eq!(part_1(&get_test_input(), &mut cache), 21);
     }
 
     #[test]
     fn test_part_2() {
-        assert_eq!(part_2(&get_test_input()), 525152);
+        let mut cache = Cache::new();
+        assert_eq!(part_2(&get_test_input(), &mut cache), 525152);
     }
 }
