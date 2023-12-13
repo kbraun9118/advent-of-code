@@ -157,7 +157,6 @@ impl<T: fmt::Debug> fmt::Debug for Grid<T> {
     }
 }
 
-
 #[cfg(test)]
 mod test {
     use super::*;
