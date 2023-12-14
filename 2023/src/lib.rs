@@ -37,7 +37,7 @@ impl<T> From<(T, T)> for Coord<T> {
     }
 }
 
-#[derive(Hash)]
+#[derive(Hash, PartialEq, Eq, Clone)]
 pub struct Grid<T> {
     height: usize,
     width: usize,
@@ -126,16 +126,6 @@ impl<T> From<Vec<Vec<T>>> for Grid<T> {
     }
 }
 
-impl<T: Clone> Clone for Grid<T> {
-    fn clone(&self) -> Self {
-        Self {
-            height: self.height,
-            width: self.width,
-            grid: self.grid.clone(),
-        }
-    }
-}
-
 impl<T, E: Into<Coord<usize>>> Index<E> for Grid<T> {
     type Output = T;
 
@@ -187,13 +177,13 @@ impl<T: Display> Display for Grid<T> {
     }
 }
 
-impl<T: PartialEq> PartialEq for Grid<T> {
-    fn eq(&self, other: &Self) -> bool {
-        self.grid == other.grid
-    }
-}
-
-impl<T: Eq> Eq for Grid<T> {}
+// impl<T: PartialEq> PartialEq for Grid<T> {
+//     fn eq(&self, other: &Self) -> bool {
+//         self.grid == other.grid
+//     }
+// }
+//
+// impl<T: Eq> Eq for Grid<T> {}
 
 // impl<T: Hash> Hash for Grid<T> {}
 
