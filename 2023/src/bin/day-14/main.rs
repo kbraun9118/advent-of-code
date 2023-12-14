@@ -1,10 +1,10 @@
-use std::fmt::Display;
+use std::{collections::HashMap, fmt::Display};
 
 use aoc::Coord;
 
 type Grid = aoc::Grid<Platform>;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 enum Platform {
     Rounded,
     Empty,
@@ -19,13 +19,6 @@ impl Platform {
             false
         }
     }
-    // fn is_cubed(self) -> bool {
-    //     if let Self::Cubed = self {
-    //         true
-    //     } else {
-    //         false
-    //     }
-    // }
 
     fn is_empty(self) -> bool {
         if let Self::Empty = self {
@@ -131,66 +124,39 @@ fn part_1(grid: &Grid) -> usize {
     load(&move_platforms(grid, Direction::North))
 }
 
-fn part_2(grid: &Grid) -> usize {
+fn run_cycle(grid: &Grid) -> Grid {
     let mut grid = grid.clone();
-    // let mut map: HashMap<Direction, usize> = vec![
-    //     (Direction::North, 0),
-    //     (Direction::West, 0),
-    //     (Direction::South, 0),
-    //     (Direction::East, 0),
-    // ]
-    // .into_iter()
-    // .collect();
-    let mut previous = vec![];
-
-    for direction in vec![
+    for direction in [
         Direction::North,
         Direction::West,
         Direction::South,
         Direction::East,
-    ]
-    .into_iter()
-    .cycle()
-    .take(1_000_000_000)
-    {
+    ] {
         grid = move_platforms(&grid, direction);
-        previous.push((direction, grid.clone()));
-        if previous.len() > 8
-            && previous[previous.len() - 4..]
-                .iter()
-                .zip(previous[previous.len() - 8..previous.len() - 4].iter())
-                .all(|(l, r)| l == r)
-        {
-            break;
-        }
     }
-
-    println!("{:?}", previous[previous.len() - 8..].iter());
-
-    load(
-        &previous
-            .into_iter()
-            .rev()
-            .find(|(d, _)| *d == Direction::East)
-            .map(|(_, l)| l)
-            .unwrap(),
-    )
+    grid
 }
 
-fn get_input() -> Vec<String> {
-    r#"O....#....
-O.OO#....#
-.....##...
-OO.#O....O
-.O.....O#.
-O.#..O.#.#
-..O..#O..O
-.......O..
-#....###..
-#OO..#...."#
-        .lines()
-        .map(String::from)
-        .collect::<Vec<_>>()
+fn part_2(grid: &Grid) -> usize {
+    let mut grid = grid.clone();
+    let mut map: HashMap<Grid, usize> = HashMap::new();
+    let mut i = 0;
+
+    while !map.contains_key(&grid) {
+        map.insert(grid.clone(), i);
+        grid = run_cycle(&grid);
+        i += 1;
+    }
+
+    let start_of_cycle = map[&grid];
+    let length_of_cycle = map.len() - start_of_cycle;
+    let offset = (1_000_000_000 - start_of_cycle) % length_of_cycle;
+    let index_of_value = start_of_cycle + offset;
+
+    map.iter()
+        .find(|(_, v)| **v == index_of_value)
+        .map(|(k, _)| load(&k))
+        .unwrap()
 }
 
 fn main() {
@@ -198,18 +164,6 @@ fn main() {
 
     aoc::print_part_1(part_1(&grid));
     aoc::print_part_2(part_2(&grid));
-    // let mut grid = parse_grid(get_input());
-    // for i in 0..3 {
-    //     grid = move_platforms(&grid, Direction::North);
-    //     println!("{grid}");
-    //     grid = move_platforms(&grid, Direction::West);
-    //     println!("{grid}");
-    //     grid = move_platforms(&grid, Direction::South);
-    //     println!("{grid}");
-    //     grid = move_platforms(&grid, Direction::East);
-    //     println!("After {} cycles: ", i + 1);
-    //     println!("{grid}");
-    // }
 }
 
 #[cfg(test)]
@@ -239,6 +193,6 @@ O.#..O.#.#
 
     #[test]
     fn test_part_2() {
-        assert_eq!(part_2(&parse_grid(get_input())), 65);
+        assert_eq!(part_2(&parse_grid(get_input())), 64);
     }
 }

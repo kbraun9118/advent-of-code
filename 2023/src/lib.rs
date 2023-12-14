@@ -37,6 +37,7 @@ impl<T> From<(T, T)> for Coord<T> {
     }
 }
 
+#[derive(Hash)]
 pub struct Grid<T> {
     height: usize,
     width: usize,
@@ -191,6 +192,10 @@ impl<T: PartialEq> PartialEq for Grid<T> {
         self.grid == other.grid
     }
 }
+
+impl<T: Eq> Eq for Grid<T> {}
+
+// impl<T: Hash> Hash for Grid<T> {}
 
 #[cfg(test)]
 mod test {
