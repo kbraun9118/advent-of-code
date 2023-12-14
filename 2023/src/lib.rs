@@ -44,18 +44,18 @@ pub struct Grid<T> {
 }
 
 impl<T> Grid<T> {
-    pub fn new<F: Fn(Coord<usize>) -> T>(height: usize, width: usize, f: F)  -> Self {
+    pub fn new<F: Fn(Coord<usize>) -> T>(height: usize, width: usize, f: F) -> Self {
         let mut grid = Vec::with_capacity(height * width);
         for y in 0..height {
             for x in 0..width {
-                grid.push(f(Coord { x, y}));
+                grid.push(f(Coord { x, y }));
             }
         }
         Self {
             height,
             width,
-            grid
-        }        
+            grid,
+        }
     }
 
     pub fn height(&self) -> usize {
@@ -146,8 +146,9 @@ impl<T, E: Into<Coord<usize>>> Index<E> for Grid<T> {
     }
 }
 
-impl<T> IndexMut<Coord<usize>> for Grid<T> {
-    fn index_mut(&mut self, index: Coord<usize>) -> &mut Self::Output {
+impl<T, E: Into<Coord<usize>>> IndexMut<E> for Grid<T> {
+    fn index_mut(&mut self, index: E) -> &mut Self::Output {
+        let index = index.into();
         assert!(index.x < self.width, "Cannot index past width");
         assert!(index.y < self.height, "Cannot index past height");
         &mut self.grid[index.y * self.width + index.x]
@@ -170,6 +171,24 @@ impl<T: fmt::Debug> fmt::Debug for Grid<T> {
             .field("width", &self.width)
             .field("grid", &rows)
             .finish()
+    }
+}
+
+impl<T: Display> Display for Grid<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        for y in 0..self.height {
+            for x in 0..self.width {
+                write!(f, "{}", self[(x, y)])?;
+            }
+            writeln!(f, "")?;
+        }
+        Ok(())
+    }
+}
+
+impl<T: PartialEq> PartialEq for Grid<T> {
+    fn eq(&self, other: &Self) -> bool {
+        self.grid == other.grid
     }
 }
 
