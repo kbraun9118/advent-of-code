@@ -92,15 +92,45 @@ impl<T> Grid<T> {
         vec
     }
 
+    pub fn cardinal_neighbors(&self, Coord { x, y }: Coord<usize>) -> Vec<&T> {
+        let mut neighbors = vec![];
+        if x > 0 {
+            neighbors.push(&self[(x - 1, y)]);
+        }
+        if y > 0 {
+            neighbors.push(&self[(x, y - 1)]);
+        }
+        if x < self.width() - 1 {
+            neighbors.push(&self[(x + 1, y)]);
+        }
+        if y < self.height() - 1 {
+            neighbors.push(&self[(x, y + 1)]);
+        }
+
+        neighbors
+    }
+
     pub fn neighbors(&self, Coord { x, y }: Coord<usize>) -> Vec<&T> {
-        let x = x as isize;
-        let y = y as isize;
-        let neighbors = vec![];
-        for i in -1..1 {
-            for j in -1..1 {
-                let nx = x + j;
+        let mut neighbors = self.cardinal_neighbors(Coord { x, y });
+
+        if x > 0 {
+            if y > 0 {
+                neighbors.push(&self[(x - 1, y - 1)]);
+            }
+            if y < self.height() - 1 {
+                neighbors.push(&self[(x - 1, y + 1)]);
             }
         }
+        if x < self.width() - 1 {
+            if y > 0 {
+                neighbors.push(&self[(x + 1, y - 1)]);
+            }
+            if y < self.height() - 1 {
+                neighbors.push(&self[(x + 1, y + 1)]);
+            }
+        }
+
+        neighbors
     }
 }
 
@@ -280,5 +310,33 @@ mod test {
         assert_eq!(grid.column(0), vec![&1, &4, &7]);
         assert_eq!(grid.column(1), vec![&2, &5, &8]);
         assert_eq!(grid.column(2), vec![&3, &6, &9]);
+    }
+
+    #[test]
+    fn cardinal_neighbors() {
+        let grid = Grid::from(vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]]);
+
+        assert_eq!(grid.cardinal_neighbors(Coord { x: 0, y: 0 }), vec![&2, &4]);
+        assert_eq!(grid.cardinal_neighbors(Coord { x: 0, y: 2 }), vec![&4, &8]);
+        assert_eq!(grid.cardinal_neighbors(Coord { x: 2, y: 0 }), vec![&2, &6]);
+        assert_eq!(grid.cardinal_neighbors(Coord { x: 2, y: 2 }), vec![&8, &6]);
+        assert_eq!(
+            grid.cardinal_neighbors(Coord { x: 1, y: 1 }),
+            vec![&4, &2, &6, &8]
+        );
+    }
+
+    #[test]
+    fn neighbors() {
+        let grid = Grid::from(vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]]);
+
+        assert_eq!(grid.neighbors(Coord { x: 0, y: 0 }), vec![&2, &4, &5]);
+        assert_eq!(grid.neighbors(Coord { x: 0, y: 2 }), vec![&4, &8, &5]);
+        assert_eq!(grid.neighbors(Coord { x: 2, y: 0 }), vec![&2, &6, &5]);
+        assert_eq!(grid.neighbors(Coord { x: 2, y: 2 }), vec![&8, &6, &5]);
+        assert_eq!(
+            grid.neighbors(Coord { x: 1, y: 1 }),
+            vec![&4, &2, &6, &8, &1, &7, &3, &9]
+        );
     }
 }
