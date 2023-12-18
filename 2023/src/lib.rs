@@ -92,45 +92,59 @@ impl<T> Grid<T> {
         vec
     }
 
-    pub fn cardinal_neighbors(&self, Coord { x, y }: Coord<usize>) -> Vec<&T> {
+    pub fn cardinal_neighbors_coords(&self, Coord { x, y }: Coord<usize>) -> Vec<Coord<usize>> {
         let mut neighbors = vec![];
         if x > 0 {
-            neighbors.push(&self[(x - 1, y)]);
+            neighbors.push((x - 1, y).into());
         }
         if y > 0 {
-            neighbors.push(&self[(x, y - 1)]);
+            neighbors.push((x, y - 1).into());
         }
         if x < self.width() - 1 {
-            neighbors.push(&self[(x + 1, y)]);
+            neighbors.push((x + 1, y).into());
         }
         if y < self.height() - 1 {
-            neighbors.push(&self[(x, y + 1)]);
+            neighbors.push((x, y + 1).into());
         }
 
         neighbors
     }
 
-    pub fn neighbors(&self, Coord { x, y }: Coord<usize>) -> Vec<&T> {
-        let mut neighbors = self.cardinal_neighbors(Coord { x, y });
+    pub fn cardinal_neighbors(&self, coord: Coord<usize>) -> Vec<&T> {
+        self.cardinal_neighbors_coords(coord)
+            .into_iter()
+            .map(|c| &self[c])
+            .collect()
+    }
+
+    pub fn neighbors_coords(&self, Coord { x, y }: Coord<usize>) -> Vec<Coord<usize>> {
+        let mut neighbors = self.cardinal_neighbors_coords(Coord { x, y });
 
         if x > 0 {
             if y > 0 {
-                neighbors.push(&self[(x - 1, y - 1)]);
+                neighbors.push((x - 1, y - 1).into());
             }
             if y < self.height() - 1 {
-                neighbors.push(&self[(x - 1, y + 1)]);
+                neighbors.push((x - 1, y + 1).into());
             }
         }
         if x < self.width() - 1 {
             if y > 0 {
-                neighbors.push(&self[(x + 1, y - 1)]);
+                neighbors.push((x + 1, y - 1).into());
             }
             if y < self.height() - 1 {
-                neighbors.push(&self[(x + 1, y + 1)]);
+                neighbors.push((x + 1, y + 1).into());
             }
         }
 
         neighbors
+    }
+
+    pub fn neighbors(&self, coord: Coord<usize>) -> Vec<&T> {
+        self.neighbors_coords(coord)
+            .into_iter()
+            .map(|c| &self[c])
+            .collect()
     }
 }
 
