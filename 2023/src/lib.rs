@@ -91,6 +91,17 @@ impl<T> Grid<T> {
 
         vec
     }
+
+    pub fn neighbors(&self, Coord { x, y }: Coord<usize>) -> Vec<&T> {
+        let x = x as isize;
+        let y = y as isize;
+        let neighbors = vec![];
+        for i in -1..1 {
+            for j in -1..1 {
+                let nx = x + j;
+            }
+        }
+    }
 }
 
 impl<T: Default> Grid<T> {
@@ -104,6 +115,10 @@ impl<T: Default> Grid<T> {
             width,
             grid,
         }
+    }
+
+    pub fn iter(&self) -> std::slice::Iter<T> {
+        self.grid.iter()
     }
 }
 
