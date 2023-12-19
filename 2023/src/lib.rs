@@ -25,6 +25,12 @@ pub fn print_part_2<T: Display>(part_2: T) {
     println!("Part 2: {}", part_2);
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum Either<T, E> {
+    Left(T),
+    Right(E),
+}
+
 #[derive(Debug, Default, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct Coord<T> {
     pub x: T,
