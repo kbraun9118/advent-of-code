@@ -4,6 +4,18 @@ use std::collections::HashMap;
 type InstructionSet = HashMap<String, Vec<Instruction>>;
 type AcceptReject = aoc::Either<Toy, Toy>;
 
+enum Node {
+    Next(Box<DecisionNode>),
+    Reject,
+    Accept,
+}
+
+struct DecisionNode {
+    value: usize,
+    left: Node,
+    right: Node,
+}
+
 #[derive(Debug, Clone, Copy)]
 struct Toy {
     extreme: usize,
@@ -139,6 +151,24 @@ enum Instruction {
     Fallback(String),
 }
 
+impl Instruction {
+    fn unwrap_test(self) -> Test {
+        if let Instruction::Test(test) = self {
+            test
+        } else {
+            panic!("Cannot unwrap instruction to test");
+        }
+    }
+
+    fn unwrap_fallback(self) -> String {
+        if let Instruction::Fallback(fallback) = self {
+            fallback
+        } else {
+            panic!("Cannot unwrap instruction to fallback")
+        }
+    }
+}
+
 impl From<&str> for Instruction {
     fn from(value: &str) -> Self {
         if value.contains(":") {
@@ -183,18 +213,68 @@ fn parse_input(input: Vec<String>) -> (InstructionSet, Vec<Toy>) {
     (instructions, toys)
 }
 
-fn main() {
-    let (instructions, toys) = parse_input(aoc::read_input_lines("19"));
+fn parse_instruction_set(
+    instruction_set: &InstructionSet,
+) -> HashMap<String, (usize, Category, String, String)> {
+    let mut map = HashMap::new();
 
-    aoc::print_part_1(part_1(&instructions, &toys));
+    for (key, instructions) in instruction_set {
+        let mut instructions = &instructions[..];
+        let mut key_index = '1';
+        while instructions.len() > 0 {
+            match instructions {
+                [head, tail] => {
+                    let head = head.clone().unwrap_test();
+                    let mut left = head.output;
+                    let mut right = tail.clone().unwrap_fallback();
+                    let value = match head.condition {
+                        Condition::LessThan => head.value,
+                        Condition::GreaterThan => head.value + 1,
+                    };
+                    if left != "A" && left != "R" {
+                        left = left + &'1'.to_string();
+                    }
+                    if right != "A" && right != "R" {
+                        right = right + &'1'.to_string();
+                    }
+
+                    map.insert(
+                        key.to_string() + &key_index.to_string(),
+                        (value, head.category,left, right),
+                    );
+                    instructions = &[];
+                }
+                [head, last @ ..] => {
+                    let head = head.clone().unwrap_test();
+                    let current_key = key.to_string() + &key_index.to_string();
+                    key_index = (key_index as u8 + 1) as char;
+                    let mut left = head.output;
+                    let mut right = key.to_string() + &key_index.to_string();
+                    let value = match head.condition {
+                        Condition::LessThan => head.value,
+                        Condition::GreaterThan => head.value + 1,
+                    };
+                    if left != "A" && left != "R" && !left.starts_with(key) {
+                        left = left + &'1'.to_string();
+                    }
+                    if right != "A" && right != "R" && !right.starts_with(key) {
+                        right = right + &'1'.to_string();
+                    }
+
+                    map.insert(current_key, (value, head.category,left, right));
+
+                    instructions = last;
+                }
+                [] => panic!("invalid"),
+            }
+        }
+    }
+
+    map
 }
 
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    fn get_test_input() -> (InstructionSet, Vec<Toy>) {
-        let input = r"px{a<2006:qkq,m>2090:A,rfg}
+fn get_test_input() -> (InstructionSet, Vec<Toy>) {
+    let input = r"px{a<2006:qkq,m>2090:A,rfg}
 pv{a>1716:R,A}
 lnx{m>1548:A,A}
 rfg{s<537:gd,x>2440:R,A}
@@ -211,11 +291,24 @@ hdj{m>838:A,pv}
 {x=2036,m=264,a=79,s=2244}
 {x=2461,m=1339,a=466,s=291}
 {x=2127,m=1623,a=2188,s=1013}"
-            .lines()
-            .map(String::from)
-            .collect();
-        parse_input(input)
-    }
+        .lines()
+        .map(String::from)
+        .collect();
+    parse_input(input)
+}
+
+fn main() {
+    // let (instructions, toys) = parse_input(aoc::read_input_lines("19"));
+    let (instructions, toys) = get_test_input();
+
+    println!("{:#?}", parse_instruction_set(&instructions));
+
+    // aoc::print_part_1(part_1(&instructions, &toys));
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
 
     #[test]
     fn test_part_1() {
@@ -223,4 +316,3 @@ hdj{m>838:A,pv}
         assert_eq!(part_1(&instructions, &toys), 19114);
     }
 }
-
