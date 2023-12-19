@@ -12,6 +12,7 @@ enum Node {
 
 struct DecisionNode {
     value: usize,
+    category: Category,
     left: Node,
     right: Node,
 }
