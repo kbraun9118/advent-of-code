@@ -4,6 +4,14 @@ use std::{
     ops::{Index, IndexMut},
 };
 
+pub fn benchmark<F: FnOnce()>(f: F) {
+    let start = std::time::Instant::now();
+    f();
+    let duration = std::time::Instant::now() - start;
+
+    println!("Time taken: {duration:?}");
+}
+
 pub fn read_input_lines(day: &'static str) -> Vec<String> {
     let file = std::fs::read_to_string(format!("./src/bin/day-{}/input.txt", day))
         .expect("Could not find file");
@@ -16,13 +24,19 @@ pub fn read_input_lines(day: &'static str) -> Vec<String> {
         lines
     }
 }
+pub fn read_input_lines_raw(day: &'static str) -> String {
+    let file = std::fs::read_to_string(format!("./src/bin/day-{}/input.txt", day))
+        .expect("Could not find file");
 
-pub fn print_part_1<T: Display>(part_1: T) {
-    println!("Part 1: {}", part_1);
+     file
 }
 
-pub fn print_part_2<T: Display>(part_2: T) {
-    println!("Part 2: {}", part_2);
+pub fn print_part_1<T: Debug>(part_1: T) {
+    println!("Part 1: {:?}", part_1);
+}
+
+pub fn print_part_2<T: Debug>(part_2: T) {
+    println!("Part 2: {:?}", part_2);
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]

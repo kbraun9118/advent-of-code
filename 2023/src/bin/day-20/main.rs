@@ -53,16 +53,23 @@ impl From<&str> for FlipFlop {
 struct Conjunction {
     name: String,
     previous_pulse: HashMap<String, Pulse>,
+    has_pulsed: HashMap<String, bool>,
     output: Vec<String>,
 }
 
 impl Conjunction {
     fn add_input(&mut self, input: String) {
-        self.previous_pulse.insert(input, Pulse::Low);
+        self.previous_pulse.insert(input.clone(), Pulse::Low);
+        self.has_pulsed.insert(input, false);
     }
 
     fn receive(&mut self, from: String, pulse: Pulse) -> (String, Pulse, Vec<String>) {
-        self.previous_pulse.entry(from).and_modify(|e| *e = pulse);
+        self.previous_pulse
+            .entry(from.clone())
+            .and_modify(|e| *e = pulse);
+        if pulse == Pulse::High {
+            self.has_pulsed.entry(from).and_modify(|e| *e = true);
+        }
 
         if self.previous_pulse.values().all(|p| *p == Pulse::High) {
             (self.name.clone(), Pulse::Low, self.output.clone())
@@ -79,6 +86,7 @@ impl From<&str> for Conjunction {
             name: name.to_string(),
             output: output.split(", ").map(String::from).collect(),
             previous_pulse: HashMap::new(),
+            has_pulsed: HashMap::new(),
         }
     }
 }
@@ -88,7 +96,6 @@ enum Module {
     FlipFlop(FlipFlop),
     Conjunction(Conjunction),
     Broadcaster(Vec<String>),
-    Unnamed(String),
 }
 
 impl Module {
@@ -97,7 +104,6 @@ impl Module {
             Module::FlipFlop(flip_flop) => flip_flop.receive(pulse),
             Module::Conjunction(conjunction) => conjunction.receive(from, pulse),
             Module::Broadcaster(output) => ("broadcaster".to_string(), pulse, output.clone()),
-            Module::Unnamed(name) => (name.clone(), pulse, vec![]),
         }
     }
 
@@ -133,7 +139,6 @@ fn parse_input(input: Vec<String>) -> ModuleConfig {
                     Module::Conjunction(ref c) => c.name.clone(),
                     Module::FlipFlop(ref f) => f.name.clone(),
                     Module::Broadcaster(_) => "broadcaster".to_string(),
-                    Module::Unnamed(ref name) => name.clone(),
                 },
                 m,
             )
@@ -141,12 +146,10 @@ fn parse_input(input: Vec<String>) -> ModuleConfig {
         .collect();
 
     for (_, value) in &output.clone() {
-        let default = vec![];
         let (name, outputs) = match value {
             Module::FlipFlop(ref f) => (f.name.clone(), &f.output),
             Module::Conjunction(ref c) => (c.name.clone(), &c.output),
             Module::Broadcaster(ref b) => ("broadcaster".to_string(), b),
-            Module::Unnamed(ref name) => (name.clone(), &default),
         };
         for out in outputs {
             if let Some(Module::Conjunction(c)) = output.get_mut(out) {
@@ -212,7 +215,6 @@ fn get_rx_input_conjuction(module_config: &ModuleConfig) -> &Conjunction {
         .unwrap_conjunction()
 }
 
-// todo part 2 needs to find the LCM of high pulses to the input to rx
 fn part_2(module_config: &ModuleConfig) -> usize {
     let mut module_config = module_config.clone();
     let mut i = 0;
@@ -220,43 +222,38 @@ fn part_2(module_config: &ModuleConfig) -> usize {
     let mut rx_input_conjuction_indecies = rx_input_conjuction
         .previous_pulse
         .iter()
-        .map(|_| 0)
-        .collect::<Vec<_>>();
+        .map(|(k, _)| (k.clone(), 0))
+        .collect::<HashMap<_, _>>();
 
     loop {
         i += 1;
         let (_, _) = press_button(&mut module_config);
-        if module_config[&"dt".to_string()]
-            .unwrap_conjunction()
-            .previous_pulse
-            .values()
-            .any(|p| *p == Pulse::High)
-        {
-            println!("{i} -> {:?}", module_config[&"dt".to_string()]);
+
+        let rx_input_conjuction = get_rx_input_conjuction(&module_config);
+
+        for (key, value) in &rx_input_conjuction.has_pulsed {
+            if rx_input_conjuction_indecies[key] == 0 && *value {
+                rx_input_conjuction_indecies.insert(key.clone(), i);
+            }
         }
-        rx_input_conjuction_indecies = get_rx_input_conjuction(&module_config)
-            .previous_pulse
-            .iter()
-            .map(|(_, v)| v)
-            .zip(rx_input_conjuction_indecies.iter())
-            .map(|(o, j)| if o == &Pulse::High && i == 0 { i } else { *j })
-            .collect();
 
-        // println!("{rx_input_conjuction_indecies:?}");
-
-        if rx_input_conjuction_indecies.iter().all(|j| *j > 0) {
+        if rx_input_conjuction_indecies.values().all(|j| *j > 0) {
             return rx_input_conjuction_indecies
-                .into_iter()
+                .values()
+                .cloned()
                 .fold(1, |acc, next| num::integer::lcm(acc, next));
         }
     }
 }
 
 fn main() {
-    let module_config = parse_input(aoc::read_input_lines("20"));
+    let input = aoc::read_input_lines("20");
+    aoc::benchmark(|| {
+        let module_config = parse_input(input);
 
-    aoc::print_part_1(part_1(&module_config));
-    aoc::print_part_2(part_2(&module_config));
+        aoc::print_part_1(part_1(&module_config));
+        aoc::print_part_2(part_2(&module_config));
+    })
 }
 
 #[cfg(test)]
