@@ -1,7 +1,4 @@
-use std::{
-    collections::{HashSet, VecDeque},
-    io::Read,
-};
+use std::collections::{HashSet, VecDeque};
 
 type Garden = aoc::Grid<GridTile>;
 type Coord = aoc::Coord<usize>;
