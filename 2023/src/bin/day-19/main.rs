@@ -241,7 +241,7 @@ fn parse_instruction_set(
 
                     map.insert(
                         key.to_string() + &key_index.to_string(),
-                        (value, head.category,left, right),
+                        (value, head.category, left, right),
                     );
                     instructions = &[];
                 }
@@ -262,7 +262,7 @@ fn parse_instruction_set(
                         right = right + &'1'.to_string();
                     }
 
-                    map.insert(current_key, (value, head.category,left, right));
+                    map.insert(current_key, (value, head.category, left, right));
 
                     instructions = last;
                 }
