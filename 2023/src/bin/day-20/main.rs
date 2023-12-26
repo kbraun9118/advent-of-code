@@ -39,6 +39,12 @@ struct Conjunction {
     output: Vec<String>,
 }
 
+impl Conjunction {
+    fn receive(&mut self, pulse: Pulse) -> (Pulse, Vec<String>) {
+        self.previous_pulse = pulse; 
+    }
+}
+
 #[derive(Debug, Clone)]
 enum Module {
     FlipFlop(FlipFlop),
