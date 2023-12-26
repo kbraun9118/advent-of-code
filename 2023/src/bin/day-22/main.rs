@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
 struct Coord {
@@ -67,12 +67,28 @@ impl Bar {
         }
     }
 
-    fn is_above(&self, other: Bar) -> bool {
-        self.coords().iter().map(|c| Coord { z: c.z - 1, ..*c}).any(|c| other.contains(c))
+    fn is_below(&self, other: Bar) -> bool {
+        if *self == other {
+            false
+        } else {
+            self.coords()
+                .iter()
+                .map(|c| Coord { z: c.z + 1, ..*c })
+                .any(|c| other.contains(c))
+        }
     }
 
-    fn is_below(&self, other: Bar) -> bool {
-        self.coords().iter().map(|c| Coord { z: c.z + 1, ..*c}).any(|c| other.contains(c))
+    fn move_down(&self) -> Self {
+        Self {
+            from: Coord {
+                z: self.from.z - 1,
+                ..self.from
+            },
+            to: Coord {
+                z: self.to.z - 1,
+                ..self.to
+            },
+        }
     }
 }
 
@@ -99,14 +115,75 @@ impl From<&str> for Bar {
 #[derive(Debug, Clone)]
 struct Tower {
     bars: HashSet<Bar>,
+    max_z: usize,
+}
+
+impl Tower {
+    fn layer(&self, z: usize) -> Vec<Bar> {
+        self.bars
+            .iter()
+            .cloned()
+            .filter(|c| c.from.z == z)
+            .collect()
+    }
+
+    fn move_bar(&mut self, bar: Bar) {
+        let mut bar = bar;
+        self.bars.remove(&bar);
+
+        while bar.from.z > 0 && !self.bars.iter().any(|b| b.is_below(bar)) {
+            bar = bar.move_down();
+        }
+
+        self.bars.insert(bar);
+
+        self.max_z = self
+            .bars
+            .iter()
+            .map(|c| c.from.z.max(c.to.z))
+            .max()
+            .unwrap();
+    }
 }
 
 impl From<Vec<String>> for Tower {
     fn from(value: Vec<String>) -> Self {
-        Self {
-            bars: value.into_iter().map(|s| Bar::from(s.as_str())).collect(),
+        let bars = value
+            .into_iter()
+            .map(|s| Bar::from(s.as_str()))
+            .collect::<HashSet<_>>();
+        let max_z = bars.iter().map(|c| c.from.z.max(c.to.z)).max().unwrap();
+
+        Self { bars, max_z }
+    }
+}
+
+fn part_1(tower: &Tower) -> usize {
+    let mut tower = tower.clone();
+    for z in 0..tower.max_z {
+        for bar in tower.layer(z) {
+            tower.move_bar(bar);
         }
     }
+
+    let supports = tower
+        .bars
+        .iter()
+        .map(|b| {
+            (
+                b,
+                tower
+                    .bars
+                    .iter()
+                    .filter(|other| b.is_below(**other))
+                    .collect::<Vec<_>>(),
+            )
+        })
+        .collect::<HashMap<_, _>>();
+
+    println!("{supports:#?}");
+
+    0
 }
 
 fn main() {
@@ -123,7 +200,7 @@ fn main() {
 
     let tower = Tower::from(input);
 
-    println!("{tower:#?}");
+    aoc::print_part_1(part_1(&tower));
 }
 
 #[cfg(test)]
@@ -148,7 +225,6 @@ mod test {
 
     #[test]
     fn test_is_above_below() {
-
         let above = Bar::from("1,0,1~1,2,1");
         let below = Bar::from("0,1,0~2,1,0");
 
