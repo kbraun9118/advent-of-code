@@ -127,11 +127,13 @@ impl Tower {
             .collect()
     }
 
-    fn move_bar(&mut self, bar: Bar) {
+    fn move_bar(&mut self, bar: Bar) -> bool {
         let mut bar = bar;
         self.bars.remove(&bar);
+        let mut moved = false;
 
         while bar.from.z > 0 && !self.bars.iter().any(|b| b.is_below(bar)) {
+            moved = true;
             bar = bar.move_down();
         }
 
@@ -140,9 +142,58 @@ impl Tower {
         self.max_z = self
             .bars
             .iter()
-            .map(|c| c.from.z.max(c.to.z))
+            .map(|c| c.to.z)
             .max()
             .unwrap();
+
+        moved
+    }
+
+    fn settle(&mut self) -> usize {
+        let mut i = 0;
+        for z in 0..=self.max_z {
+            for bar in self.layer(z) {
+                if self.move_bar(bar) {
+                    i += 1;
+                }
+            }
+        }
+        i
+    }
+
+    fn remove(&mut self, bar: Bar) {
+        self.bars.remove(&bar);
+    }
+
+    fn supports(&self) -> HashMap<Bar, Vec<Bar>> {
+        self.bars
+            .iter()
+            .map(|b| {
+                (
+                    b.clone(),
+                    self.bars
+                        .iter()
+                        .cloned()
+                        .filter(|other| b.is_below(*other))
+                        .collect::<Vec<_>>(),
+                )
+            })
+            .collect::<HashMap<_, _>>()
+    }
+
+    fn supported_by(&self) -> HashMap<Bar, Vec<Bar>> {
+        let mut supported_by = HashMap::new();
+        let supports = self.supports();
+        for (key, _) in supports.iter() {
+            let supported = supports
+                .iter()
+                .filter(|(_, v)| v.contains(key))
+                .map(|(k, _)| (*k).clone())
+                .collect::<Vec<_>>();
+            supported_by.insert(*key, supported);
+        }
+
+        supported_by
     }
 }
 
@@ -160,47 +211,41 @@ impl From<Vec<String>> for Tower {
 
 fn part_1(tower: &Tower) -> usize {
     let mut tower = tower.clone();
-    for z in 0..tower.max_z {
-        for bar in tower.layer(z) {
-            tower.move_bar(bar);
+    tower.settle();
+
+    let supports = tower.supports();
+    let supported_by = tower.supported_by();
+
+    supports
+        .into_iter()
+        .filter(|(_, v)| v.into_iter().all(|s| supported_by[s].len() > 1))
+        .count()
+}
+
+fn part_2(tower: &Tower) -> usize {
+    let mut tower = tower.clone();
+    tower.settle();
+    let mut count = 0;
+    
+    for i in 0..tower.max_z {
+        for bar in tower.layer(i) {
+            let mut current = tower.clone();
+            current.remove(bar);
+            count += current.settle();
         }
     }
 
-    let supports = tower
-        .bars
-        .iter()
-        .map(|b| {
-            (
-                b,
-                tower
-                    .bars
-                    .iter()
-                    .filter(|other| b.is_below(**other))
-                    .collect::<Vec<_>>(),
-            )
-        })
-        .collect::<HashMap<_, _>>();
-
-    println!("{supports:#?}");
-
-    0
+    count
 }
 
 fn main() {
-    let input = r"1,0,1~1,2,1
-0,0,2~2,0,2
-0,2,3~2,2,3
-0,0,4~0,2,4
-2,0,5~2,2,5
-0,1,6~2,1,6
-1,1,8~1,1,9"
-        .lines()
-        .map(String::from)
-        .collect::<Vec<_>>();
+    let input = aoc::read_input_lines("22");
+    aoc::benchmark(|| {
+        let tower = Tower::from(input);
 
-    let tower = Tower::from(input);
-
-    aoc::print_part_1(part_1(&tower));
+        aoc::print_part_1(part_1(&tower));
+        aoc::print_part_2(part_2(&tower));
+    })
 }
 
 #[cfg(test)]
@@ -228,12 +273,29 @@ mod test {
         let above = Bar::from("1,0,1~1,2,1");
         let below = Bar::from("0,1,0~2,1,0");
 
-        assert!(above.is_above(below));
         assert!(below.is_below(above));
+    }
+
+    fn get_test_input() -> Tower {
+        r"1,0,1~1,2,1
+0,0,2~2,0,2
+0,2,3~2,2,3
+0,0,4~0,2,4
+2,0,5~2,2,5
+0,1,6~2,1,6
+1,1,8~1,1,9"
+            .lines()
+            .map(String::from)
+            .collect::<Vec<_>>()
+            .into()
     }
 
     #[test]
     fn test_part_1() {
-        assert_eq!(1, 1);
+        assert_eq!(part_1(&get_test_input()), 5);
+    }
+    #[test]
+    fn test_part_2() {
+        assert_eq!(part_2(&get_test_input()), 7);
     }
 }
