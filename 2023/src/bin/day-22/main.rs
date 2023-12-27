@@ -139,12 +139,7 @@ impl Tower {
 
         self.bars.insert(bar);
 
-        self.max_z = self
-            .bars
-            .iter()
-            .map(|c| c.to.z)
-            .max()
-            .unwrap();
+        self.max_z = self.bars.iter().map(|c| c.to.z).max().unwrap();
 
         moved
     }
@@ -226,7 +221,7 @@ fn part_2(tower: &Tower) -> usize {
     let mut tower = tower.clone();
     tower.settle();
     let mut count = 0;
-    
+
     for i in 0..tower.max_z {
         for bar in tower.layer(i) {
             let mut current = tower.clone();
