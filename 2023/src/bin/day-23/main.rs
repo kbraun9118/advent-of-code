@@ -1,4 +1,4 @@
-use std::collections::{BinaryHeap, HashMap, HashSet};
+use std::collections::{BinaryHeap, HashMap};
 
 type Grid = aoc::Grid<Square>;
 type Coord = aoc::Coord<usize>;
@@ -28,24 +28,6 @@ impl From<char> for Square {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
-struct SquareState {
-    pos: Coord,
-    state: isize,
-}
-
-impl PartialOrd for SquareState {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        other.state.partial_cmp(&self.state)
-    }
-}
-
-impl Ord for SquareState {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        other.state.cmp(&self.state)
-    }
-}
-
 fn get_longest_path(grid: &Grid) -> usize {
     let start = grid
         .index_iter()
@@ -60,15 +42,34 @@ fn get_longest_path(grid: &Grid) -> usize {
         .next()
         .unwrap();
 
-    let mut heap = BinaryHeap::new();
-    heap.push(SquareState {
-        pos: start,
-        state: 0,
-    });
-
-    while let Some(SquareState { pos, state }) = heap.pop() {}
-
     0
+}
+
+fn get_neighbors(grid: &Grid, pos: Coord) -> Vec<Coord> {
+    match grid[pos] {
+        Square::Path => grid
+            .cardinal_neighbors_coords(pos)
+            .into_iter()
+            .filter(|c| grid[*c] != Square::Forest)
+            .collect(),
+        Square::SlopeUp => vec![Coord {
+            x: pos.x,
+            y: pos.y - 1,
+        }],
+        Square::SlopeDown => vec![Coord {
+            x: pos.x,
+            y: pos.y + 1,
+        }],
+        Square::SlopeLeft => vec![Coord {
+            x: pos.x - 1,
+            y: pos.y,
+        }],
+        Square::SlopeRight => vec![Coord {
+            x: pos.x + 1,
+            y: pos.y,
+        }],
+        _ => panic!("invalid position"),
+    }
 }
 
 fn get_test_input() -> Grid {
@@ -104,5 +105,5 @@ fn get_test_input() -> Grid {
 fn main() {
     let grid = get_test_input();
 
-    print!("{}", get_longest_path(&grid));
+    aoc::print_part_1(get_longest_path(&grid));
 }
