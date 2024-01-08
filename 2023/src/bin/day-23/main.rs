@@ -1,5 +1,7 @@
 use std::collections::VecDeque;
 
+use crossbeam::queue::SegQueue;
+
 type Grid = aoc::Grid<Square>;
 type Coord = aoc::Coord<usize>;
 
@@ -42,11 +44,11 @@ fn get_longest_path<F: Fn(&Grid, Coord) -> Vec<Coord>>(grid: &Grid, neighbor_fn:
         .next()
         .unwrap();
 
-    let mut paths = VecDeque::new();
-    paths.push_back(vec![start]);
+    let paths = SegQueue::new();
+    paths.push(vec![start]);
     let mut end_paths = vec![];
 
-    while let Some(path) = paths.pop_front() {
+    while let Some(path) = paths.pop() {
         for neighbor in neighbor_fn(grid, *path.last().unwrap()) {
             if !path.contains(&neighbor) {
                 if neighbor == end {
@@ -54,7 +56,7 @@ fn get_longest_path<F: Fn(&Grid, Coord) -> Vec<Coord>>(grid: &Grid, neighbor_fn:
                 } else {
                     let mut next = path.clone();
                     next.push(neighbor);
-                    paths.push_back(next);
+                    paths.push(next);
                 }
             }
         }
