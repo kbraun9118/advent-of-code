@@ -1,4 +1,4 @@
-use std::collections::{BinaryHeap, HashMap};
+use std::collections::VecDeque;
 
 type Grid = aoc::Grid<Square>;
 type Coord = aoc::Coord<usize>;
@@ -28,7 +28,7 @@ impl From<char> for Square {
     }
 }
 
-fn get_longest_path(grid: &Grid) -> usize {
+fn get_longest_path<F: Fn(&Grid, Coord) -> Vec<Coord>>(grid: &Grid, neighbor_fn: F) -> usize {
     let start = grid
         .index_iter()
         .filter(|c| c.y == 0)
@@ -42,10 +42,28 @@ fn get_longest_path(grid: &Grid) -> usize {
         .next()
         .unwrap();
 
-    0
+    let mut paths = VecDeque::new();
+    paths.push_back(vec![start]);
+    let mut end_paths = vec![];
+
+    while let Some(path) = paths.pop_front() {
+        for neighbor in neighbor_fn(grid, *path.last().unwrap()) {
+            if !path.contains(&neighbor) {
+                if neighbor == end {
+                    end_paths.push(path.clone());
+                } else {
+                    let mut next = path.clone();
+                    next.push(neighbor);
+                    paths.push_back(next);
+                }
+            }
+        }
+    }
+
+    end_paths.into_iter().map(|v| v.len()).max().unwrap_or(0)
 }
 
-fn get_neighbors(grid: &Grid, pos: Coord) -> Vec<Coord> {
+fn get_neighbors_part_1(grid: &Grid, pos: Coord) -> Vec<Coord> {
     match grid[pos] {
         Square::Path => grid
             .cardinal_neighbors_coords(pos)
@@ -72,8 +90,42 @@ fn get_neighbors(grid: &Grid, pos: Coord) -> Vec<Coord> {
     }
 }
 
-fn get_test_input() -> Grid {
-    r"#.#####################
+fn get_neighbors_part_2(grid: &Grid, pos: Coord) -> Vec<Coord> {
+    match grid[pos] {
+        Square::Forest => panic!("invalid position"),
+        _ => grid
+            .cardinal_neighbors_coords(pos)
+            .into_iter()
+            .filter(|c| grid[*c] != Square::Forest)
+            .collect(),
+    }
+}
+
+fn part_1(grid: &Grid) -> usize {
+    get_longest_path(grid, get_neighbors_part_1)
+}
+
+fn part_2(grid: &Grid) -> usize {
+    get_longest_path(grid, get_neighbors_part_2)
+}
+
+fn main() {
+    let grid: Grid = aoc::read_input_lines("23")
+        .into_iter()
+        .map(|s| s.chars().map(Square::from).collect::<Vec<_>>())
+        .collect::<Vec<_>>()
+        .into();
+
+    aoc::print_part_1(part_1(&grid));
+    aoc::print_part_2(part_2(&grid));
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    fn get_test_input() -> Grid {
+        r"#.#####################
 #.......#########...###
 #######.#########.#.###
 ###.....#.>.>.###.#.###
@@ -96,14 +148,19 @@ fn get_test_input() -> Grid {
 #.###.###.#.###.#.#v###
 #.....###...###...#...#
 #####################.#"
-        .lines()
-        .map(|s| s.chars().map(Square::from).collect::<Vec<_>>())
-        .collect::<Vec<_>>()
-        .into()
-}
+            .lines()
+            .map(|s| s.chars().map(Square::from).collect::<Vec<_>>())
+            .collect::<Vec<_>>()
+            .into()
+    }
 
-fn main() {
-    let grid = get_test_input();
+    #[test]
+    fn test_part_1() {
+        assert_eq!(part_1(&get_test_input()), 94);
+    }
 
-    aoc::print_part_1(get_longest_path(&grid));
+    #[test]
+    fn test_part_2() {
+        assert_eq!(part_2(&get_test_input()), 154);
+    }
 }
