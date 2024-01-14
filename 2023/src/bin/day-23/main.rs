@@ -49,6 +49,7 @@ fn get_longest_path<F: Fn(&Grid, Coord) -> Vec<Coord>>(grid: &Grid, neighbor_fn:
     let mut end_paths = vec![];
 
     while let Some(path) = paths.pop() {
+        println!("Paths length: {}", paths.len());
         for neighbor in neighbor_fn(grid, *path.last().unwrap()) {
             if !path.contains(&neighbor) {
                 if neighbor == end {
