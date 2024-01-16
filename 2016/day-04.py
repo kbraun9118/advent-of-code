@@ -22,15 +22,33 @@ class Room:
 
 
     def decrypt(self) -> str:
-        "".join([])
+        return "".join([rotate(ch, self.id) for ch in self.name])
+
+def rotate(ch: str, amount: int) -> str:
+    if ch == "-":
+        return " "
+    a = ord('a')
+    num = ord(ch) - a
+    new_num = (num + amount) % 26
+    return chr(new_num + a)
 
 
-def part_1(lines: list[str]) -> int:
-    rooms = [Room(line) for line in lines]
+
+def part_1(rooms: list[Room]) -> int:
     real = [room.id for room in rooms if room.is_real()]
     return sum(real)
 
 
+def part_2(rooms: list[Room]) :
+    real = [room for room in rooms if room.is_real()]
+    for r in real:
+        if r.decrypt() == "northpole object storage":
+            return r.id
+    return -1
+
+
 if __name__ == "__main__":
     lines = lib.read_input_file("04")
-    lib.print_part_1(part_1(lines))
+    rooms = [Room(line) for line in lines]
+    lib.print_part_1(part_1(rooms))
+    lib.print_part_2(part_2(rooms))
