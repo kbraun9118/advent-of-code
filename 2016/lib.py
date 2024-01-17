@@ -13,4 +13,4 @@ def print_part_1(ans):
 
 
 def print_part_2(ans):
-    print(f"Part 1: {ans}")
+    print(f"Part 2: {ans}")
