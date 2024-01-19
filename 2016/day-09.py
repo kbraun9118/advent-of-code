@@ -8,7 +8,7 @@ def decompress(input: str) -> str:
     p = 0
     decompressed = ""
     while p < len(input):
-        if input[p] != '(':  # )
+        if input[p] != "(":  # )
             decompressed += input[p]
             p += 1
         else:
@@ -16,11 +16,30 @@ def decompress(input: str) -> str:
             if match is not None:
                 length, repeat = match.groups()
                 p += match.end() + match.start()
-                next = input[p:p + int(length)]
+                next = input[p: p + int(length)]
                 for _ in range(int(repeat)):
                     decompressed += next
                 p += int(length)
     return decompressed
+
+
+def decompress_iter(input: str) -> int:
+    p = 0
+    decompressed_len = 0
+    while p < len(input):
+        if input[p] != "(":  # )
+            decompressed_len += 1
+            p += 1
+        else:
+            match = MARKER.match(input[p:])
+            if match is not None:
+                length, repeat = match.groups()
+                p += match.end() + match.start()
+                decompressed_len += int(repeat) * decompress_iter(
+                    input[p: p + int(length)]
+                )
+                p += int(length)
+    return decompressed_len
 
 
 def part_1(input: str) -> int:
@@ -28,10 +47,7 @@ def part_1(input: str) -> int:
 
 
 def part_2(input: str) -> int:
-    decompressed = decompress(input)
-    while '(' in decompressed:  # )
-        decompressed = decompress(decompressed)
-    return len(decompressed)
+    return decompress_iter(input)
 
 
 if __name__ == "__main__":
