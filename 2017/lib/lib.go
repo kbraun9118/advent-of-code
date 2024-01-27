@@ -14,7 +14,7 @@ func ReadInputFile(day string) []string {
 
 	lines := string(content)
 
-	return strings.Split(lines, "\n")
+	return strings.Split(strings.TrimSpace(lines), "\n")
 }
 
 func ReadTestFile(day string) []string {
@@ -25,7 +25,7 @@ func ReadTestFile(day string) []string {
 
 	lines := string(content)
 
-	return strings.Split(lines, "\n")
+	return strings.Split(strings.TrimSpace(lines), "\n")
 }
 
 func PrintPart1(output any) {
