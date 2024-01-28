@@ -13,7 +13,10 @@ func parse(lines []string) [][]int {
 		split := strings.Split(line, "\t")
 		output_line := make([]int, 0)
 		for _, num := range split {
-			num, _ := strconv.Atoi(num)
+			num, err := strconv.Atoi(num)
+      if err != nil {
+        continue
+      }
 			output_line = append(output_line, num)
 		}
 
