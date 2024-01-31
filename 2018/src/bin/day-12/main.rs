@@ -10,7 +10,7 @@ use std::ops::Index;
 use std::ops::Range;
 
 fn main() {
-    let reader = BufReader::new(File::open(Path::new("src/bin/day-12/input.txt")).unwrap());
+    let reader = BufReader::new(File::open(Path::new("../input/2018/12/input.txt")).unwrap());
 
     let lines: Vec<String> = reader
         .lines()

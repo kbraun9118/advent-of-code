@@ -5,7 +5,7 @@ use std::io::BufRead;
 
 fn main() {
     let reader = BufReader::new(
-        File::open(Path::new("src/bin/day-03/input.txt")).unwrap());
+        File::open(Path::new("../input/2018/03/input.txt")).unwrap());
 
     let mut squares = Vec::new();
     reader.lines()

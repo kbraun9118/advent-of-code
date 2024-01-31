@@ -7,7 +7,7 @@ use std::str::FromStr;
 //this is wrong
 fn main() {
     let reader = BufReader::new(
-        File::open(Path::new("src/bin/day-10/input.txt")).unwrap());
+        File::open(Path::new("../input/2018/10/input.txt")).unwrap());
 
     let values = reader.lines()
         .map(|line| line.unwrap())

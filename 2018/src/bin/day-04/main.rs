@@ -7,7 +7,7 @@ use std::collections::HashMap;
 
 fn main() {
     let reader = BufReader::new(
-        File::open(Path::new("src/bin/day-04/input.txt")).unwrap());
+        File::open(Path::new("../input/2018/04/input.txt")).unwrap());
 
     let mut sorted = reader.lines().map(|results| results.unwrap()).collect::<Vec<String>>();
     sorted.sort();

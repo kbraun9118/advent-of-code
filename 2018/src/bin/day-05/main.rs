@@ -8,7 +8,7 @@ use std::str::Chars;
 
 fn main() {
     let reader = BufReader::new(
-        File::open(Path::new("src/bin/day-05/input.txt")).unwrap());
+        File::open(Path::new("../input/2018/05/input.txt")).unwrap());
     let lines = reader.lines()
         .map(|result| result.unwrap())
         .find(|_| true).unwrap();

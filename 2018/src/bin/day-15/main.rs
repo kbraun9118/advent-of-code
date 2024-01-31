@@ -14,7 +14,7 @@ use crossbeam_utils::thread;
 
 fn main() {
     let reader = BufReader::new(
-        File::open(Path::new("src/bin/day-15/input.txt")).unwrap());
+        File::open(Path::new("../input/2018/15/input.txt")).unwrap());
     let tiles: Map = reader.lines()
         .map(|line| line.unwrap())
         .map(|string| string.chars()

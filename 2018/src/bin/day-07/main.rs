@@ -6,7 +6,7 @@ use std::collections::HashMap;
 
 fn main() {
     let reader = BufReader::new(
-        File::open(Path::new("src/bin/day-07/input.txt")).unwrap());
+        File::open(Path::new("../input/2018/07/input.txt")).unwrap());
 
     let mut map: HashMap<Step, Vec<Step>> = HashMap::new();
     reader.lines()

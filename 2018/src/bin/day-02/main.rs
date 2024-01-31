@@ -7,7 +7,7 @@ use std::ops::Deref;
 
 fn main() {
     let strings: Vec<String> = BufReader::new(
-        File::open(Path::new("src/bin/day-02/input.txt")).unwrap())
+        File::open(Path::new("../input/2018/02/input.txt")).unwrap())
         .lines()
         .map(|string| string.unwrap())
         .collect();

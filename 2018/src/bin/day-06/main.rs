@@ -9,7 +9,7 @@ use std::collections::HashMap;
 
 fn main() {
     let reader = BufReader::new(
-        File::open(Path::new("src/bin/day-06/input.txt")).unwrap());
+        File::open(Path::new("../input/2018/06/input.txt")).unwrap());
 
     let points: Vec<Point> = reader.lines()
         .map(|line| line.unwrap())

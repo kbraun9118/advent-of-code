@@ -10,7 +10,7 @@ use std::path::Path;
 
 fn main() {
     let reader = BufReader::new(
-        File::open(Path::new("src/bin/day-16/input.txt")).unwrap());
+        File::open(Path::new("../input/2018/16/input.txt")).unwrap());
 
     let lines: Vec<String> = reader.lines()
         .into_iter()

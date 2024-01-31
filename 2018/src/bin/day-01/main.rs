@@ -5,7 +5,7 @@ use std::path::Path;
 use std::collections::HashMap;
 
 fn main() {
-    let input = File::open(Path::new("src/bin/day-01/input.txt")).unwrap();
+    let input = File::open(Path::new("../input/2018/01/input.txt")).unwrap();
     let reader = BufReader::new(input);
 
     let mut map = HashMap::new();

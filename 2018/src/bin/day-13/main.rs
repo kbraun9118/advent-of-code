@@ -8,7 +8,7 @@ use std::rc::{Rc, Weak};
 
 fn main() {
     let reader = BufReader::new(
-        File::open(Path::new("src/bin/day-13/input.txt")).unwrap());
+        File::open(Path::new("../input/2018/13/input.txt")).unwrap());
 
     let lines = reader.lines()
         .map(|line| line.unwrap().chars().collect::<Vec<char>>())
