@@ -3,7 +3,7 @@ use aoc_2015::lines_for_day ;
 const DIST: u32 = 2503;
 
 fn main() {
-    let reindeer = lines_for_day("day-14")
+    let reindeer = lines_for_day("14")
         .into_iter()
         .map(Reindeer::from)
         .collect::<Vec<_>>();

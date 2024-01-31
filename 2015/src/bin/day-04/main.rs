@@ -1,7 +1,7 @@
 use aoc_2015::lines_for_day;
 
 fn main() {
-    let input = lines_for_day("day-04").pop().unwrap();
+    let input = lines_for_day("04").pop().unwrap();
     let mut five_zeros: i32 = 0;
     let mut six_zeros: i32 = 0;
     for i in 1.. {

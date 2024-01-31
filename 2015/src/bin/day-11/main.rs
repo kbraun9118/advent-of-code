@@ -4,7 +4,7 @@ use aoc_2015::lines_for_day;
 use regex::Regex;
 
 fn main() {
-    let input = lines_for_day("day-11").pop().expect("No Input");
+    let input = lines_for_day("11").pop().expect("No Input");
     let part_one_answer = next_valid_password(&input);
     println!("Part One: {}", part_one_answer);
     let part_two_answer = increment_string(&part_one_answer);

@@ -3,7 +3,7 @@ use aoc_2015::lines_for_day;
 fn main() {
     let mut grid = Grid::new(100);
 
-    lines_for_day("day-18")
+    lines_for_day("18")
         .iter()
         .enumerate()
         .for_each(|(y, r)| {

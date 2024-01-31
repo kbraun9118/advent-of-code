@@ -2,7 +2,7 @@ use aoc_2015::lines_for_day;
 use std::str::FromStr;
 
 fn main() {
-    let lines = lines_for_day("day-02");
+    let lines = lines_for_day("02");
 
     let lines = lines
         .iter()

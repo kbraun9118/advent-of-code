@@ -3,7 +3,7 @@ use std::{collections::HashMap, vec};
 use aoc_2015::lines_for_day;
 
 fn main() {
-    let input = lines_for_day("day-12").remove(0);
+    let input = lines_for_day("12").remove(0);
     let json = Json::parse(&input);
     println!("Part One: {}", json.part_one());
     println!("Part Two: {}", json.part_two());

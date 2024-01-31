@@ -4,7 +4,7 @@ use aoc_2015::lines_for_day;
 use std::collections::HashMap;
 
 fn main() {
-    let mut instructions = lines_for_day("day-07")
+    let mut instructions = lines_for_day("07")
         .into_iter()
         .map(|line| {
             let (left, right) = line.split_once(" -> ").expect("Could not split");

@@ -3,7 +3,7 @@
 use aoc_2015::lines_for_day;
 
 fn main() {
-    let lines = lines_for_day("day-21")
+    let lines = lines_for_day("21")
         .into_iter()
         .map(|l| l.split_once(": ").unwrap().1.parse::<i32>().unwrap())
         .collect::<Vec<_>>();

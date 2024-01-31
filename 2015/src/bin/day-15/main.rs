@@ -3,7 +3,7 @@ use std::vec;
 use aoc_2015::lines_for_day;
 
 fn main() {
-    let ingredients = lines_for_day("day-15")
+    let ingredients = lines_for_day("15")
         .into_iter()
         .map(Ingredient::from)
         .collect::<Vec<_>>();

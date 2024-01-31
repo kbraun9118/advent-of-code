@@ -1,7 +1,7 @@
 use aoc_2015::lines_for_day;
 
 fn main() {
-    let line = lines_for_day("day-10").pop().expect("No Input");
+    let line = lines_for_day("10").pop().expect("No Input");
     let part_one_answer = part_one(line);
     println!("Part One: {}", part_one_answer.len());
     println!("Part One: {}", part_two(part_one_answer).len());

@@ -2,7 +2,7 @@ use aoc_2015::lines_for_day;
 use regex::Regex;
 
 fn main() {
-    let lines = lines_for_day("day-08");
+    let lines = lines_for_day("08");
 
     let part_one: usize = lines
         .iter()

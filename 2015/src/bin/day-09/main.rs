@@ -5,7 +5,7 @@ use std::ops::Deref;
 type DistanceMap = HashMap<Location, Vec<Distance>>;
 
 fn main() {
-    let lines = lines_for_day("day-09");
+    let lines = lines_for_day("09");
     let distances = parse(lines);
 
     println!("Part One: {}", solve(&distances, true));

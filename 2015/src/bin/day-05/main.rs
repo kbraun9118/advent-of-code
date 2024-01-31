@@ -2,7 +2,7 @@ use aoc_2015::lines_for_day;
 use std::collections::HashMap;
 
 fn main() {
-    let lines = lines_for_day("day-05");
+    let lines = lines_for_day("05");
 
     let part_one = lines
         .iter()

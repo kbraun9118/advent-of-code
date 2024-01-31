@@ -4,7 +4,7 @@ use std::{collections::HashSet, vec};
 use aoc_2015::lines_for_day;
 
 fn main() {
-    let mut lines = lines_for_day("day-17")
+    let mut lines = lines_for_day("17")
         .into_iter()
         .map(|l| l.parse::<i32>().unwrap())
         .collect::<Vec<_>>();

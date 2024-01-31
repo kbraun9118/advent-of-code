@@ -2,7 +2,7 @@ use aoc_2015::lines_for_day;
 use std::collections::{HashMap, HashSet};
 
 fn main() {
-    let commands = lines_for_day("day-06")
+    let commands = lines_for_day("06")
         .into_iter()
         .map(Command::from)
         .collect::<Vec<_>>();

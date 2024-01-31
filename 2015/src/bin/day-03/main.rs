@@ -4,7 +4,7 @@ use std::collections::HashMap;
 type Point = (i32, i32);
 
 fn main() {
-    let input = lines_for_day("day-03").pop().unwrap();
+    let input = lines_for_day("03").pop().unwrap();
     let house_visits = parse_input(input.clone());
 
     println!("Part One: {}", house_visits.len());

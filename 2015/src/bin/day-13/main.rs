@@ -7,7 +7,7 @@ use std::{
 use aoc_2015::lines_for_day;
 
 fn main() {
-    let lines = lines_for_day("day-13");
+    let lines = lines_for_day("13");
     let mut happiness = parse(lines);
     let all_arrangements = combos(happiness.keys().collect::<Vec<_>>());
 

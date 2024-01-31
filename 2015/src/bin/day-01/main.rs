@@ -2,7 +2,7 @@ use aoc_2015::lines_for_day;
 use std::isize;
 
 fn main() {
-    let lines = lines_for_day("day-01");
+    let lines = lines_for_day("01");
     let part_one = isize::try_from(lines[0].chars().filter(|c| *c == '(').count()).unwrap()
         - isize::try_from(lines[0].chars().filter(|c| *c == ')').count()).unwrap();
 

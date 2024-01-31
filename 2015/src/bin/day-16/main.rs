@@ -15,7 +15,7 @@ cars: 2
 perfumes: 1"
             .to_string(),
     );
-    let sues = lines_for_day("day-16")
+    let sues = lines_for_day("16")
         .into_iter()
         .map(Sue::from)
         .collect::<Vec<_>>();

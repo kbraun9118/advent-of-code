@@ -5,7 +5,7 @@ use aoc_2015::lines_for_day;
 use regex::Regex;
 
 fn main() {
-    let lines = lines_for_day("day-19");
+    let lines = lines_for_day("19");
     let (replacements, molecule) = lines.split_at(lines.len() - 2);
     let molecule = molecule[1].as_str().to_string();
 
