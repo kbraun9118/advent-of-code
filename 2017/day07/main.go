@@ -2,7 +2,6 @@ package main
 
 import (
 	"aoc/2017/lib"
-	"math"
 	"strconv"
 	"strings"
 )
@@ -28,13 +27,31 @@ func (p *Program) Add(child *Program) {
 	p.children = append(p.children, child)
 }
 
-func (p Program) Weight() int {
+func (p Program) TotalWeight() int {
 	childWeight := 0
 	for _, child := range p.children {
-		childWeight += child.Weight()
+		childWeight += child.TotalWeight()
 	}
 
 	return p.weight + childWeight
+}
+
+func (p Program) Unbalanced() *Program {
+	for i, child := range p.children[:len(p.children)-2] {
+		first := child.TotalWeight()
+		second := p.children[i+1].TotalWeight()
+		third := p.children[i+2].TotalWeight()
+		if first != second && first != third {
+			return child
+		}
+		if second != third && second != first {
+			return p.children[i+1]
+		}
+		if third != second && third != first {
+			return p.children[i+2]
+		}
+	}
+	return nil
 }
 
 func parse(inputs []string) Program {
@@ -70,18 +87,20 @@ func parse(inputs []string) Program {
 }
 
 func part2(program Program) int {
-	weights := lib.Map(program.children, func(p *Program) int {
-		weight := p.Weight()
-		println(weight)
-		return weight
-	})
-	for i, weight := range weights {
-		if weight != weights[i+1] {
-			return int(math.Abs(float64(weight - weights[i+1])))
-		}
+	current := program.Unbalanced()
+	next := current.Unbalanced()
+	for next != nil {
+		current = next
+		next = next.Unbalanced()
 	}
+	next = current
+	current = current.parent
 
-	return -1
+	if next == current.children[0] {
+		return next.weight + current.children[1].TotalWeight() - next.TotalWeight()
+	} else {
+		return next.weight + current.children[0].TotalWeight() - next.TotalWeight()
+	}
 }
 
 func main() {
