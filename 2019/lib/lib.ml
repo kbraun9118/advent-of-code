@@ -11,7 +11,7 @@ let get_lines file =
   remove_end_newline lines
 
 let get_input_lines day =
-  get_lines @@ Printf.sprintf "./input/day_%s/input.txt" day
+  get_lines @@ Printf.sprintf "../input/%s/input.txt" day
 
 let get_test_lines day =
   get_lines @@ Printf.sprintf "./input/day_%s/test.txt" day
