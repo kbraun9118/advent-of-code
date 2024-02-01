@@ -79,7 +79,7 @@ class Passport {
   }
 }
 
-const paragraphs = lib.readParagraphs(__dirname + '/input.txt');
+const paragraphs = lib.readParagraphs('04');
 
 const passports = paragraphs.map(paragraph => new Passport(paragraph));
 

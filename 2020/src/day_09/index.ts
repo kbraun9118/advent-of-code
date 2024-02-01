@@ -1,6 +1,6 @@
 import * as lib from '../lib';
 
-const lines = lib.readLines(__dirname + '/input.txt').map(line => +line);
+const lines = lib.readLines('09').map(line => +line);
 
 const addsUpTo = (list: number[], index: number): boolean => {
   for (let i = index - 25; i < index - 1; i++) {

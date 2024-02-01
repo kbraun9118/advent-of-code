@@ -46,7 +46,7 @@ class Ticket {
   }
 }
 
-const lines = lib.readLines(__dirname + '/input.txt');
+const lines = lib.readLines('05');
 
 const ticketIds = lines.map(Ticket.fromString)
   .map(ticket => ticket.seatId)

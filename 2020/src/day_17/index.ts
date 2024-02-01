@@ -171,7 +171,7 @@ class Dimension4D {
   }
 }
 
-const lines = lib.readLines(__dirname + '/input.txt');
+const lines = lib.readLines('17');
 
 let dimension3D = new Dimension3D();
 let dimension4D = new Dimension4D();

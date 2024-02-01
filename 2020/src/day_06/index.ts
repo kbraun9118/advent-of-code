@@ -1,6 +1,6 @@
 import * as lib from '../lib';
 
-const paragraphs = lib.readParagraphs(__dirname + '/input.txt');
+const paragraphs = lib.readParagraphs('06');
 
 lib.writePart1(
   paragraphs

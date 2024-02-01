@@ -35,7 +35,7 @@ class Bag {
   }
 }
 
-const lines = lib.readLines(__dirname + '/input.txt');
+const lines = lib.readLines('07');
 
 const bags = lines.map(Bag.fromString);
 let bagsToSearch = [...bags];

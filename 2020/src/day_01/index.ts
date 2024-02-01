@@ -1,6 +1,6 @@
 import * as lib from '../lib';
 
-const lines = lib.readLines(`${__dirname}/input.txt`);
+const lines = lib.readLines('01');
 
 let first: number = 0;
 let second: number = 0;

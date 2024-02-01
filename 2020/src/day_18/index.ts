@@ -50,7 +50,7 @@ const solveShunting = (input: string[]): number => {
   return +tokens[0];
 };
 
-const lines = lib.readLines(__dirname + '/input.txt');
+const lines = lib.readLines('18');
 lib.writePart1(lines.map(line => solveShunting(shuntingYard(line, {'*': 0, '+': 0}))).reduce((acc, next) => {
   return acc + next;
 }, 0));

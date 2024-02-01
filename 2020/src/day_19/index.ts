@@ -31,7 +31,7 @@ const buildRules = (dictionary: RuleDictionary, rule: number, expandedDictionary
   return returned;
 };
 
-const lines = lib.readLines(__dirname + '/input.txt');
+const lines = lib.readLines('19');
 
 const rules = lines.slice(0, lines.findIndex(value => value === ''));
 const messages = lines.slice(lines.findIndex(value => value === '') + 1);

@@ -30,7 +30,7 @@ class Instruction {
   }
 }
 
-const lines = lib.readLines(__dirname + '/input.txt');
+const lines = lib.readLines('08');
 
 const instructions = lines.map(Instruction.fromString);
 

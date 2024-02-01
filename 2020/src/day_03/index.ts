@@ -28,7 +28,7 @@ const calculatePath = (lines: string[], down: number, right: number) => {
 };
 
 
-const lines = lib.readLines(__dirname + '/input.txt');
+const lines = lib.readLines('03');
 const linesForLength = copyLines(lines, getAmountToCopy(lines));
 
 let part1 = calculatePath(lines, 1, 3);

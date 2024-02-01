@@ -25,7 +25,7 @@ const moveDirection = (x: number, y: number, direction: string, amount: number):
   }
 };
 
-const lines = lib.readLines(__dirname + '/input.txt');
+const lines = lib.readLines('12');
 const directions = lines.map(line => {
   const instruction = line.substring(0, 1);
   const value = line.substring(1);

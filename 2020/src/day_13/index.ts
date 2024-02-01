@@ -1,6 +1,6 @@
 import * as lib from '../lib';
 
-const lines = lib.readLines(__dirname + '/input.txt');
+const lines = lib.readLines('13');
 
 const timestamp = +lines[0];
 const buses = lines[1].split(',').filter(bus => !isNaN(+bus)).map(bus => +bus);

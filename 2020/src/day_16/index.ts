@@ -43,7 +43,7 @@ class TicketValidator {
   }
 }
 
-const lines = lib.readLines(__dirname + '/input.txt');
+const lines = lib.readLines('16');
 
 const rules = lines.slice(0, lines.indexOf(''));
 const myTicket = lines[lines.indexOf('your ticket:') + 1].split(',').map(val => +val);

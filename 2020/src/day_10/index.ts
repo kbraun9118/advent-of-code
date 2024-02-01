@@ -1,6 +1,6 @@
 import * as lib from '../lib';
 
-const lines = lib.readLines(__dirname + '/input.txt');
+const lines = lib.readLines('10');
 
 const sorted = lines.map(line => +line).sort((left, right) => left - right);
 

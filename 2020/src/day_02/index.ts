@@ -34,7 +34,7 @@ class Password {
   }
 }
 
-const lines = lib.readLines(`${__dirname}/input.txt`);
+const lines = lib.readLines('02');
 
 let passwords = lines.map(Password.fromString);
 console.log('Part 1: ' + passwords.filter(password => password.isValidPart1()).length);

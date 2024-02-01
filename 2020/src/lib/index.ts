@@ -1,12 +1,12 @@
 import { readFileSync } from 'fs';
 
-export const readLines = (dir: string): string[] => {
-  const file = readFileSync(dir, 'utf8');
+export const readLines = (day: string): string[] => {
+  const file = readFileSync(`../input/2020/${day}/input.txt`, 'utf8');
   return file.substring(0, file.length - 1).split('\r').join('').split('\n');
 };
 
-export const readParagraphs = (dir: string) => {
-  const file = readFileSync(dir, 'utf8');
+export const readParagraphs = (day: string): string[] => {
+  const file = readFileSync(`../input/2020/${day}/input.txt`, 'utf8');
   return file.substring(0, file.length - 1).split('\r').join('').split('\n\n');
 };
 

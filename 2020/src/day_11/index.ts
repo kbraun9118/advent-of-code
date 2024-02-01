@@ -130,7 +130,7 @@ class Ferry {
   }
 }
 
-const lines = lib.readLines(__dirname + '/input.txt');
+const lines = lib.readLines('11');
 
 let previous = new Ferry(lines);
 let next = previous.tick(4);

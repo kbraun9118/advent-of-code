@@ -1,7 +1,7 @@
 import * as lib from '../lib';
 import Long from 'long';
 
-const lines = lib.readLines(__dirname + '/input.txt');
+const lines = lib.readLines('14');
 
 const maskNumber1 = (input: number, mask: string): Long => {
   const mask0 = Long.fromString(mask.split('').map(char => char === '0' ? 0 : 1).join(''), true, 2);

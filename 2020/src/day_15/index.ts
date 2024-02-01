@@ -1,9 +1,9 @@
 import * as lib from '../lib';
 
-const [input] = lib.readLines(__dirname + '/input.txt').map(line => line.split(',').map(char => +char));
+const [input] = lib.readLines('15').map(line => line.split(',').map(char => +char));
 
 const solve = (starting: number[], part1 = true): number => {
-  let sequence = [...starting];
+  const sequence = [...starting];
   const dictionary: Map<number, number> = new Map<number, number>();
   sequence.slice(0, sequence.length - 1).forEach((num, i) => dictionary.set(num, i));
   // console.log(dictionary);
