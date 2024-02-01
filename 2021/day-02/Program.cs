@@ -1,4 +1,4 @@
-﻿var file = File.ReadAllLines(@"./input.txt");
+﻿var file = Lib.FileReader.ReadLines("02");
 
 var endPosition1 = file.Select(line => new Instruction(line))
                       .Aggregate(new Position(0, 0), (acc, instruction) => instruction.UpdatePosition(acc));

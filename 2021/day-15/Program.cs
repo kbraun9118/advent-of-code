@@ -2,7 +2,7 @@
 {
     public static void Main(string[] args)
     {
-        var file = File.ReadAllLines(@"./input.txt");
+        var file = Lib.FileReader.ReadLines("15");
 
         var cave = new Cave(file);
         var partOne = cave.ShortestPath();

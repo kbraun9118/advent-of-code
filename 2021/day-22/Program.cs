@@ -1,4 +1,4 @@
-﻿var file = File.ReadAllLines(@"./input.txt");
+﻿var file = Lib.FileReader.ReadLines("01");
 var instructions = file.Select(s => new Instruction(s)).ToList();
 
 Console.WriteLine($"Part One: {CuboidSize(instructions, true)}");

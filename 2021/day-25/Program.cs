@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-var file = File.ReadAllLines(@"./input.txt");
+var file = Lib.FileReader.ReadLines("25");
 var seaFloor = new SeaFloor(file);
 var count = 0;
 

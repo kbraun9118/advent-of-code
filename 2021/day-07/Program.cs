@@ -1,4 +1,4 @@
-﻿var input = File.ReadAllLines(@"./input.txt")[0].Split(",").Select(item => int.Parse(item)).ToArray();
+﻿var input = Lib.FileReader.ReadLines("07")[0].Split(",").Select(item => int.Parse(item)).ToArray();
 
 var max = input.Max();
 var min = input.Min();

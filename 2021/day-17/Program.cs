@@ -2,7 +2,7 @@
 {
     public static void Main(string[] args)
     {
-        var file = File.ReadAllLines(@"./input.txt")[0];
+        var file = Lib.FileReader.ReadLines("17")[0];
 
         var ranges = file.Substring(15).Split(", ");
         var xRanges = ranges[0].Split("..").Select(s => int.Parse(s)).ToArray();

@@ -1,4 +1,4 @@
-﻿var file = File.ReadAllLines(@"./input.txt");
+﻿var file = Lib.FileReader.ReadLines("03");
 // Convert.ToInt32(file.First(), 2)
 
 var createRates = (string[] lines) =>

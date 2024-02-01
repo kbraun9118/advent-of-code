@@ -62,7 +62,7 @@
 
     public static void Main(string[] args)
     {
-        var file = File.ReadAllLines(@"./input.txt");
+        var file = Lib.FileReader.ReadLines("10");
 
         var errors = file
             .Select(line => findFirstError(line))

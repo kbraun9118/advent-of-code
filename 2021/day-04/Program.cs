@@ -1,4 +1,4 @@
-﻿var file = File.ReadAllLines(@"./input.txt");
+﻿var file = Lib.FileReader.ReadLines("04");
 
 var called = file[0];
 

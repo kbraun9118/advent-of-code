@@ -1,4 +1,4 @@
-﻿var file = File.ReadAllLines(@"./input.txt").ToList();
+﻿var file = Lib.FileReader.ReadLines("14").ToList();
 
 var template = file[0];
 var pairs = file.Skip(2).Select(s => s.Split(" -> ")).ToList();

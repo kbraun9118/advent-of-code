@@ -3,7 +3,7 @@
 
     public static void Main(string[] args)
     {
-        var file = File.ReadAllLines(@"./input.txt")[0];
+        var file = Lib.FileReader.ReadLines("16")[0];
 
         var binFile = string
             .Join("", file.ToCharArray()

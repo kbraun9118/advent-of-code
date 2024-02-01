@@ -1,4 +1,4 @@
-﻿var file = File.ReadLines(@"./input.txt").Select(item => int.Parse(item)).ToArray();
+﻿var file = Lib.FileReader.ReadLines("01").Select(item => int.Parse(item)).ToArray();
 
 var part1 = file.Skip(1)
                 .Zip(file)

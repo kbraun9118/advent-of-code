@@ -1,4 +1,4 @@
-﻿var seaFloor = new SeaFloor(File.ReadAllLines(@"./input.txt"));
+﻿var seaFloor = new SeaFloor(Lib.FileReader.ReadLines("09"));
 
 var lowPoints = seaFloor.LowPoints();
 

@@ -1,4 +1,4 @@
-﻿var file = File.ReadAllLines(@"./input.txt");
+﻿var file = Lib.FileReader.ReadLines("21");
 var player1Start = int.Parse(file[0].Substring(28));
 var player2Start = int.Parse(file[1].Substring(28));
 var player1 = new Player { Position = player1Start };

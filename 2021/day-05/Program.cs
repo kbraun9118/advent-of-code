@@ -1,4 +1,4 @@
-﻿var file = File.ReadAllLines(@"./input.txt");
+﻿var file = Lib.FileReader.ReadLines("05");
 
 var lines = file.Select(line => new Line(line)).ToList();
 

@@ -1,4 +1,4 @@
-﻿var file = File.ReadAllLines(@"./input.txt");
+﻿var file = Lib.FileReader.ReadLines("19");
 
 var scanners = file
     .ChunkWhile(s => s.StartsWith("--") is false)

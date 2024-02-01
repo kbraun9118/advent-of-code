@@ -2,7 +2,7 @@
 {
     public static void Main(string[] args)
     {
-        var file = File.ReadAllLines(@"./input.txt");
+        var file = Lib.FileReader.ReadLines("13");
         var points = file.TakeWhile(s => s != "").Select(s => s.Split(',')).Select(s => new Point(int.Parse(s[0]), int.Parse(s[1]))).ToHashSet();
         var instructions = file.Skip(points.Count + 1).ToList();
 

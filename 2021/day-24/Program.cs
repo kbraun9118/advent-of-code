@@ -12,7 +12,7 @@ static (long result, long time) PartOne()
 {
     var sw = new Stopwatch();
     sw.Start();
-    var lines = File.ReadAllLines(@"./input.txt");
+    var lines = Lib.FileReader.ReadLines("24");
     var pairs = new List<(int, int)>();
     foreach (var i in Enumerable.Range(0, 14))
     {
@@ -50,7 +50,7 @@ static (long result, long time) PartTwo()
 {
     var sw = new Stopwatch();
     sw.Start();
-    var lines = File.ReadAllLines(@"./input.txt");
+    var lines = Lib.FileReader.ReadLines("01");
     var pairs = new List<(int, int)>();
     foreach (var i in Enumerable.Range(0, 14))
     {

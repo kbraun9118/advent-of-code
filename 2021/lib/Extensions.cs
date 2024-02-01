@@ -17,4 +17,12 @@
 
 
     }
+
+    public static class FileReader
+    {
+        public static string[] ReadLines(string day)
+        {
+            return File.ReadAllLines(@$"../input/2021/{day}/input.txt");
+        }
+    }
 }

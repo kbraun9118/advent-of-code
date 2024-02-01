@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 
+//TODO: fix input
 var energy1 = SolveMinimumEnergyForFile(args.FirstOrDefault() ?? "input1.txt");
 Console.WriteLine($"Part 1 Result = {energy1}");
 
@@ -9,7 +10,7 @@ Console.WriteLine($"Part 1 Result = {energy2}");
 
 int SolveMinimumEnergyForFile(string file)
 {
-  var input = Parse(File.ReadAllLines(file));
+  var input = Parse(Lib.FileReader.ReadLines(file));
   var goal = input with { Rooms = new string(input.Rooms.OrderBy(ch => ch).ToArray()) };
 
   return SolveMinimumEnergy(input, goal);

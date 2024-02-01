@@ -1,4 +1,4 @@
-﻿var file = File.ReadAllLines(@"./input.txt");
+﻿var file = Lib.FileReader.ReadLines("08");
 
 var partOne = file.SelectMany(line => line.Split(" | ")[1].Split(" ").Where(digit => digit.Length == 2 || digit.Length == 4 || digit.Length == 3 || digit.Length == 7))
     .Count();
@@ -13,15 +13,15 @@ var decoder = (string[] decoded) =>
     var eightKey = decodedList.Find(key => key.Count() == 7)!;
     decodedList.Remove(eightKey);
     dict[eightKey] = "8";
-    
+
     var oneKey = decodedList.Find(key => key.Count() == 2)!;
     decodedList.Remove(oneKey);
     dict[oneKey] = "1";
-    
+
     var fourKey = decodedList.Find(key => key.Count() == 4)!;
     decodedList.Remove(fourKey);
     dict[fourKey] = "4";
-    
+
     var sevenKey = decodedList.Find(key => key.Count() == 3)!;
     decodedList.Remove(sevenKey);
     dict[sevenKey] = "7";
@@ -41,7 +41,7 @@ var decoder = (string[] decoded) =>
     var twoKey = lengthFiveKeys[0];
     decodedList.Remove(twoKey);
     dict[twoKey] = "2";
-    
+
     var sixKey = decodedList.Find(key => !key.ContainsAllChars(sevenKey))!;
     decodedList.Remove(sixKey);
     dict[sixKey] = "6";
@@ -54,7 +54,7 @@ var decoder = (string[] decoded) =>
     return dict;
 };
 
-var partTwo = file.Select(line => 
+var partTwo = file.Select(line =>
 {
     var split = line.Split(" | ");
     var dict = decoder(split[0].Split(" "));

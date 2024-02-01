@@ -2,7 +2,7 @@
 {
     public static void Main(string[] args)
     {
-        var file = File.ReadAllLines(@"./input.txt").ToArray();
+        var file = Lib.FileReader.ReadLines("18").ToArray();
 
         var snailFishNumber = file
             .Select(s => new SnailfishPair(s))

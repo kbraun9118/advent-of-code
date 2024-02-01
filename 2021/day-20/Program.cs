@@ -1,6 +1,6 @@
 ﻿using Lib;
 
-var file = File.ReadAllLines(@"./input.txt");
+var file = Lib.FileReader.ReadLines("20");
 
 var key = file[0];
 var trench = new Trench(file[2..]);

@@ -1,4 +1,4 @@
-﻿var file = File.ReadAllLines(@"./input.txt")[0];
+﻿var file = Lib.FileReader.ReadLines("06")[0];
 
 var generation = new long[9];
 

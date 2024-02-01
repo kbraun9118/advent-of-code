@@ -1,4 +1,4 @@
-﻿var file = File.ReadAllLines(@"./input.txt");
+﻿var file = Lib.FileReader.ReadLines("11");
 
 var seaFloor = new SeaFloor(file);
 var partOne = 0;
