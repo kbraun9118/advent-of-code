@@ -1,7 +1,7 @@
 import kotlin.math.absoluteValue
 
 fun main() {
-    val instructions = readFile()
+    val instructions = readFile("09")
         .map(Instruction::fromString)
     printOutput(moveRope(instructions), moveRope(instructions, 9))
 }

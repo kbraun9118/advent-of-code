@@ -1,5 +1,5 @@
 fun main() {
-    val elves = readFile()
+    val elves = readFile("01")
         .chunkBy { it == "" }
         .map { it.sumOf { inner -> inner.toInt() } }
         .sortedDescending()

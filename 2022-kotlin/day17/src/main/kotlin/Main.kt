@@ -1,6 +1,6 @@
 fun main() {
-    val pattern1 = generateSequence { readFile()[0].map { it } }.flatten()
-    val pattern2 = generateSequence { readFile()[0].map { it } }.flatten()
+    val pattern1 = generateSequence { readFile("17")[0].map { it } }.flatten()
+    val pattern2 = generateSequence { readFile("17")[0].map { it } }.flatten()
 
     printOutput(simulation(pattern1, 2022), simulation(pattern2, 2022 * 2))
 }

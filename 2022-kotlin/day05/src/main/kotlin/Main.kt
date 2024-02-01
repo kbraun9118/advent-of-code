@@ -1,7 +1,7 @@
 import java.util.Stack
 
 fun main() {
-    val lines = readFile()
+    val lines = readFile("05")
 
     val (config, instructionsInput) = lines.chunkBy { it == "" }
 

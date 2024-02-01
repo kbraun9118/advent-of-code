@@ -1,5 +1,5 @@
 fun main() {
-    val instructions = readFile().map(Instruction::parse)
+    val instructions = readFile("10").map(Instruction::parse)
 
     val cycles = mutableListOf(Cycle(1, 1))
 

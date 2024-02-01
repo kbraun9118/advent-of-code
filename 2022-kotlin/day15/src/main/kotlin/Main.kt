@@ -3,7 +3,7 @@ import kotlin.math.absoluteValue
 
 fun main() {
     val regex = """Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)""".toRegex()
-    val areas = readFile()
+    val areas = readFile("15")
         .map { regex.find(it)!!.groups }
         .map {
             Point(it[1]!!.value.toLong(), it[2]!!.value.toLong()) to

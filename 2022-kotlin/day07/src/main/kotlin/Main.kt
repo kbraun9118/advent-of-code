@@ -1,5 +1,5 @@
 fun main() {
-    val lines = readFile()
+    val lines = readFile("07")
 
     val fs = parseFS(lines)
 

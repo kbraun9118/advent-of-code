@@ -1,5 +1,5 @@
 fun main() {
-    val trees = readFile().map { it.map { inner -> inner.digitToInt() } }
+    val trees = readFile("08").map { it.map { inner -> inner.digitToInt() } }
 
     printOutput(part1(trees), part2(trees))
 }

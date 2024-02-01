@@ -1,5 +1,5 @@
 fun main() {
-    val ranges = readFile().map { line ->
+    val ranges = readFile("14").map { line ->
         line.split(" -> ")
             .map {
                 it

@@ -1,6 +1,6 @@
 fun main() {
 
-    val pairs = readFile()
+    val pairs = readFile("04")
         .map { it.split(',') }
         .map { it.map { inner -> inner.split('-').map(String::toInt) } }
         .map { it[0][0]..it[0][1] to it[1][0]..it[1][1] }

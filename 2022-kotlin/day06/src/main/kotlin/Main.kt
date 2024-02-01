@@ -1,5 +1,5 @@
 fun main() {
-    val input = readFile()[0]
+    val input = readFile("06")[0]
 
     val part1 = input
         .withIndex()

@@ -1,5 +1,5 @@
 fun main() {
-    val lines = readFile()
+    val lines = readFile("12")
     val graph = Graph<Step>(0 until lines[0].length, lines.indices)
     lines.flatMapIndexed { y, row ->
         row.mapIndexed { x, step ->

@@ -1,5 +1,5 @@
 fun main() {
-    val lines = readFile()
+    val lines = readFile("02")
         .map { it[0] to it[2] }
     val part1 = lines
         .map { (left, right) -> left.toRPS() to right.toRPS() }

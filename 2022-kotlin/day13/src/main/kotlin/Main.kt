@@ -1,6 +1,6 @@
 fun main() {
     val packets =
-        readFile()
+        readFile("13")
             .chunked(3)
             .map {
                 it.dropLastWhile(String::isEmpty)
@@ -13,7 +13,7 @@ fun main() {
         .sumOf { (i, _) -> i + 1 }
 
     val dividerPackets = listOf(Packet.parse("[[2]]"), Packet.parse("[[6]]"))
-    val part2 = (readFile()
+    val part2 = (readFile("13")
         .asSequence()
         .filter(String::isNotEmpty)
         .map(Packet::parse) + dividerPackets)

@@ -1,9 +1,9 @@
 import java.math.BigInteger
 
 fun main() {
-    val monkeys1 = readFile().chunked(7).map(Monkey::parse)
-    val monkeys2 = readFile().chunked(7).map(Monkey::parse)
-    val k = readFile()
+    val monkeys1 = readFile("11").chunked(7).map(Monkey::parse)
+    val monkeys2 = readFile("11").chunked(7).map(Monkey::parse)
+    val k = readFile("11")
         .chunked(7)
         .map { it[3].drop(21).toBigInteger() }
         .fold(BigInteger.ONE) { acc, i -> acc * i }

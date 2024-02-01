@@ -1,11 +1,7 @@
 import java.io.File
 
-fun readFile(): List<String> {
-    val url = ClassLoader
-        .getSystemResource(
-            System.getProperties()["inputFile"] as String?
-                ?: "input.txt"
-        ).toURI()
+fun readFile(day: String): List<String> {
+    val url = "../input/2022/${day}/input.txt"
     return File(url).readLines()
 }
 

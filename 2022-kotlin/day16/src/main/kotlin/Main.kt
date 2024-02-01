@@ -1,7 +1,7 @@
 fun main() {
     val regex = """Valve (\w+) has flow rate=(\d+); tunnels? leads? to valves? ((\w+,?\s?)+)""".toRegex()
 
-    val tunnels = readFile()
+    val tunnels = readFile("16")
         .mapNotNull { regex.find(it) }
         .map { it.groupValues }
         .associate { it[1] to Tunnel(it[2].toInt(), it[3].split(", ")) }

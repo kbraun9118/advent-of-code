@@ -1,5 +1,5 @@
 fun main() {
-    val lines = readFile()
+    val lines = readFile("03")
 
     val part1 = lines
         .map { it.slice(0 until it.length / 2) to it.slice(it.length / 2 until it.length) }

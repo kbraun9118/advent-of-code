@@ -2,6 +2,10 @@
 All solutions written in Kotlin. To run, execute `./gradlew dayXX:run` where `XX` is the day. 
 Defaults to my input. If a different input desired, replace contents of `./dayXX/src/resources/input.txt`.
 
+(instructions above are incorrect)
+
+TODO FIX input file locations
+
 ## Days Completed
 - [X] Day 1
 - [X] Day 2
