@@ -13,7 +13,7 @@ pub fn benchmark<F: FnOnce()>(f: F) {
 }
 
 pub fn read_input_lines(day: &'static str) -> Vec<String> {
-    let file = std::fs::read_to_string(format!("./src/bin/day-{}/input.txt", day))
+    let file = std::fs::read_to_string(format!("../input/2023/{}/input.txt", day))
         .expect("Could not find file");
 
     let mut lines = file.lines().map(|s| s.to_string()).collect::<Vec<_>>();
@@ -25,7 +25,7 @@ pub fn read_input_lines(day: &'static str) -> Vec<String> {
     }
 }
 pub fn read_input_lines_raw(day: &'static str) -> String {
-    let file = std::fs::read_to_string(format!("./src/bin/day-{}/input.txt", day))
+    let file = std::fs::read_to_string(format!("../input/2023/{}/input.txt", day))
         .expect("Could not find file");
 
      file
