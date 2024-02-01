@@ -11,7 +11,7 @@ let get_lines file =
   remove_end_newline lines
 
 let get_input_lines day =
-  get_lines @@ Printf.sprintf "../input/%s/input.txt" day
+  get_lines @@ Printf.sprintf "../input/2019/%s/input.txt" day
 
 let get_test_lines day =
   get_lines @@ Printf.sprintf "./input/day_%s/test.txt" day
@@ -21,4 +21,6 @@ let split_once delimiter input =
   | [ left; right ] -> (left, right)
   | _ -> failwith ("Cannot split once: " ^ input)
 
-let min_list_by_key f = List.fold_left (fun acc next -> if min (f acc) (f next) = f acc then acc else next)
+let min_list_by_key f =
+  List.fold_left (fun acc next ->
+      if min (f acc) (f next) = f acc then acc else next)
