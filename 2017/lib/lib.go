@@ -62,7 +62,7 @@ func (rb *RingBuffer) ReverseRange(start, end int) {
 }
 
 func (rb RingBuffer) Score() int {
-  return rb.buffer[0] * rb.buffer[1]
+	return rb.buffer[0] * rb.buffer[1]
 }
 
 func CreateRingBuffer(length int) RingBuffer {
