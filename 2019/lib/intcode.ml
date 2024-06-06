@@ -1,6 +1,7 @@
 type t = {
   instructions : int array;
   instruction_pointer : int;
+  relative_base : int;
   input : int list;
   output : string;
   complete : bool;
@@ -11,6 +12,7 @@ let create ?(argument = 0) input =
   {
     instructions = Array.of_list ints;
     instruction_pointer = 0;
+    relative_base = 0;
     input = [ argument ];
     output = "";
     complete = false;
@@ -36,6 +38,7 @@ let param_at_position position params intcode =
       intcode.instructions.(intcode.instructions.(intcode.instruction_pointer
                                                   + position))
   | 1 -> intcode.instructions.(intcode.instruction_pointer + position)
+  | 2 -> intcode.instructions.(intcode.relative_base + position)
   | _ -> failwith "Invalid parameter mode"
 
 let return_at_position position params return_value intcode =
@@ -47,6 +50,7 @@ let return_at_position position params return_value intcode =
   | 1 ->
       intcode.instructions.(intcode.instruction_pointer + position) <-
         return_value
+  | 2 -> intcode.instructions.(intcode.relative_base + position) <- return_value
   | _ -> failwith "Invalid parameter mode"
 
 let debug = false
@@ -138,6 +142,16 @@ let rec execute_until_output intcode =
       else return_at_position 3 params 0 intcode;
       execute_until_output
         { intcode with instruction_pointer = intcode.instruction_pointer + 4 }
+      (* Adjust Relative Base *)
+  | 9 ->
+      print_debug "Testing Adjust Relative Base";
+      let offset = param_at_position 1 params intcode in
+      execute_until_output
+        {
+          intcode with
+          instruction_pointer = intcode.instruction_pointer + 2;
+          relative_base = intcode.relative_base + offset;
+        }
   | _ ->
       failwith
       @@ Printf.sprintf "Invalid opcode: %d at position: %d"
