@@ -1,5 +1,32 @@
+module InfArr = struct
+  type 'a t = { mutable items : 'a array; creator : int -> 'a }
+
+  let from_arr arr default = { items = arr; creator = (fun _ -> default) }
+
+  let fill_arr idx arr =
+    let len = Array.length arr.items in
+    if idx < len then ()
+    else
+      let appended_len = idx - len + 1 in
+      let appended = Array.init appended_len arr.creator in
+      arr.items <- Array.append arr.items appended
+
+  let nth idx arr =
+    fill_arr idx arr;
+    arr.items.(idx)
+
+  let to_arr arr = arr.items
+  let ( .%() ) arr idx = nth idx arr
+
+  let update idx value arr =
+    fill_arr idx arr;
+    arr.items.(idx) <- value
+
+  let ( .%()<- ) arr idx value = update idx value arr
+end
+
 type t = {
-  instructions : int array;
+  instructions : int InfArr.t;
   instruction_pointer : int;
   relative_base : int;
   input : int list;
@@ -10,7 +37,7 @@ type t = {
 let create ?(argument = 0) input =
   let ints = String.split_on_char ',' input |> List.map int_of_string in
   {
-    instructions = Array.of_list ints;
+    instructions = InfArr.from_arr (Array.of_list ints) 0;
     instruction_pointer = 0;
     relative_base = 0;
     input = [ argument ];
@@ -35,22 +62,33 @@ let param_at_position position params intcode =
   let mode = List.nth params (position - 1) in
   match mode with
   | 0 ->
-      intcode.instructions.(intcode.instructions.(intcode.instruction_pointer
-                                                  + position))
-  | 1 -> intcode.instructions.(intcode.instruction_pointer + position)
-  | 2 -> intcode.instructions.(intcode.relative_base + position)
+      intcode.instructions.InfArr.%(intcode.instructions.InfArr.%(intcode
+                                                                    .instruction_pointer
+                                                                  + position))
+  | 1 -> intcode.instructions.InfArr.%(intcode.instruction_pointer + position)
+  | 2 ->
+      intcode.instructions.InfArr.%(intcode.instructions.InfArr.%(intcode
+                                                                    .instruction_pointer
+                                                                  + position)
+                                    + intcode.relative_base)
   | _ -> failwith "Invalid parameter mode"
 
 let return_at_position position params return_value intcode =
   let mode = List.nth params (position - 1) in
   match mode with
   | 0 ->
-      intcode.instructions.(intcode.instructions.(intcode.instruction_pointer
-                                                  + position)) <- return_value
-  | 1 ->
-      intcode.instructions.(intcode.instruction_pointer + position) <-
+      intcode.instructions.InfArr.%(intcode.instructions.InfArr.%(intcode
+                                                                    .instruction_pointer
+                                                                  + position)) <-
         return_value
-  | 2 -> intcode.instructions.(intcode.relative_base + position) <- return_value
+  | 1 ->
+      intcode.instructions.InfArr.%(intcode.instruction_pointer + position) <-
+        return_value
+  | 2 ->
+      intcode.instructions.InfArr.%(intcode.instructions.InfArr.%(intcode
+                                                                    .instruction_pointer
+                                                                  + position)
+                                    + intcode.relative_base) <- return_value
   | _ -> failwith "Invalid parameter mode"
 
 let debug = false
@@ -64,7 +102,7 @@ let is_complete intcode = intcode.complete
 
 let rec execute_until_output intcode =
   let opcode, params =
-    parse_op_code intcode.instructions.(intcode.instruction_pointer)
+    parse_op_code intcode.instructions.InfArr.%(intcode.instruction_pointer)
   in
   match opcode with
   | 99 ->
@@ -155,20 +193,22 @@ let rec execute_until_output intcode =
   | _ ->
       failwith
       @@ Printf.sprintf "Invalid opcode: %d at position: %d"
-           intcode.instructions.(intcode.instruction_pointer)
+           intcode.instructions.InfArr.%(intcode.instruction_pointer)
            intcode.instruction_pointer
 
 let rec execute intcode =
   let intcode = execute_until_output intcode in
   if is_complete intcode then intcode else execute intcode
 
-let return_code intcode = intcode.instructions.(0)
+let return_code intcode = intcode.instructions.InfArr.%(0)
 
 let opcodes intcode =
-  Array.iter (fun x -> Printf.printf "%d " x) intcode.instructions
+  Array.iter
+    (fun x -> Printf.printf "%d " x)
+    (InfArr.to_arr intcode.instructions)
 
 let replace_value index value intcode =
-  intcode.instructions.(index) <- value;
+  intcode.instructions.InfArr.%(index) <- value;
   intcode
 
 let output intcode =
