@@ -32,7 +32,11 @@ end = struct
     |> List.concat |> PairsSet.of_list
 end
 
-let ( =. ) a b = abs_float (a -. b) < Float.epsilon
+let epsilon = 1.0e-8
+
+let ( =. ) a b =
+  let difference = abs_float (a -. b) in
+  difference < epsilon
 
 (* Going to compare slopes then see if distances eq *)
 let slopes_equal (source_x, source_y) (dest_x, dest_y) (mid_x, mid_y) =
@@ -59,15 +63,22 @@ let distances_sum source dest mid =
   let ab = distance source dest in
   let ac = distance source mid in
   let bc = distance mid dest in
+  (* Printf.printf *)
+  (*   "Distance AB: %f, Distance AC: %f, Distance BC: %f, AC + BC = %f\n" ab ac bc *)
+  (*   (ac +. bc); *)
   ab =. ac +. bc
 
 let intercepts source dest mid =
-  distances_sum source dest mid && slopes_equal source dest mid
+  let distance = distances_sum source dest mid in
+  let slope = slopes_equal source dest mid in
+  (* Printf.printf "Distances: %b, Slope: %b\n" distance slope; *)
+  distance && slope
 
 let () =
-  let input = Lib.get_test_lines "10" in
-  let grid = Grid.init input in
-  let asteroids = Grid.asteroids grid in
-  PairsSet.iter
-    (fun (x, y) -> Printf.printf "Asteroid at (%d, %d)\n" x y)
-    asteroids
+  (* let input = Lib.get_test_lines "10" in *)
+  (* let grid = Grid.init input in *)
+  (* let asteroids = Grid.asteroids grid in *)
+  (* PairsSet.iter *)
+  (*   (fun (x, y) -> Printf.printf "Asteroid at (%d, %d)\n" x y) *)
+  (*   asteroids *)
+  intercepts (0, 0) (3, 6) (2, 4) |> string_of_bool |> print_endline
