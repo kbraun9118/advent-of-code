@@ -1,37 +1,13 @@
-module IntPairs = struct
-  type t = int * int
+let asteroids lines =
+  let grid = List.map (fun line -> String.to_seq line |> List.of_seq) lines in
+  List.mapi
+    (fun y items ->
+      List.mapi (fun x c -> (x, c)) items
+      |> List.filter_map (fun (x, c) -> if c = '#' then Some (x, y) else None))
+    grid
+  |> List.concat
 
-  let compare (x0, y0) (x1, y1) =
-    match Stdlib.compare x0 x1 with 0 -> Stdlib.compare y0 y1 | c -> c
-end
-
-module PairsSet = Set.Make (IntPairs)
-
-module Grid : sig
-  type t = char list list
-
-  val init : string list -> t
-
-  (* val get : int -> int -> t -> char *)
-  val asteroids : t -> PairsSet.t
-end = struct
-  type t = char list list
-
-  let init lines =
-    List.map (fun line -> String.to_seq line |> List.of_seq) lines
-
-  let get x y grid = List.nth (List.nth grid y) x
-
-  let asteroids grid =
-    List.mapi
-      (fun y items ->
-        List.mapi (fun x c -> (x, c)) items
-        |> List.filter_map (fun (x, c) ->
-               if c == '#' then Some (x, y) else None))
-      grid
-    |> List.concat |> PairsSet.of_list
-end
-
+let list_without (x, y) = List.filter (fun (xi, yi) -> xi <> x || yi <> y)
 let epsilon = 1.0e-8
 
 let ( =. ) a b =
@@ -40,7 +16,8 @@ let ( =. ) a b =
 
 (* Going to compare slopes then see if distances eq *)
 let slopes_equal (source_x, source_y) (dest_x, dest_y) (mid_x, mid_y) =
-  if source_y == dest_y && source_y == mid_y then true
+  if source_y = dest_y && source_y = mid_y then true
+  else if source_x = dest_x && source_x = mid_x then true
   else
     let slopeAB =
       Float.div
@@ -64,21 +41,38 @@ let distances_sum source dest mid =
   let ac = distance source mid in
   let bc = distance mid dest in
   (* Printf.printf *)
-  (*   "Distance AB: %f, Distance AC: %f, Distance BC: %f, AC + BC = %f\n" ab ac bc *)
-  (*   (ac +. bc); *)
+  (* "Distance AB: %f, Distance AC: %f, Distance BC: %f, AC + BC = %f, Are Eq = \ *)
+     (*    %b\n" *)
+  (*   ab ac bc (ac +. bc) *)
+  (*   (ac +. bc =. ab); *)
   ab =. ac +. bc
 
 let intercepts source dest mid =
   let distance = distances_sum source dest mid in
   let slope = slopes_equal source dest mid in
+  (* Printf.printf "Source: (%d, %d), Dest: (%d, %d), Mid: (%d, %d)\n" (fst source) *)
+  (*   (snd source) (fst dest) (snd dest) (fst mid) (snd mid); *)
   (* Printf.printf "Distances: %b, Slope: %b\n" distance slope; *)
   distance && slope
 
+let count_viewable source asteroids =
+  let without_source = list_without source asteroids in
+  List.filter
+    (fun dest ->
+      List.exists
+        (fun mid -> intercepts source dest mid)
+        (list_without dest without_source)
+      |> not)
+    without_source
+  |> List.length
+
+let max_list = List.fold_left Int.max 0
+
+let part_1 asteroids =
+  List.map (fun source -> count_viewable source asteroids) asteroids
+
 let () =
-  (* let input = Lib.get_test_lines "10" in *)
-  (* let grid = Grid.init input in *)
-  (* let asteroids = Grid.asteroids grid in *)
-  (* PairsSet.iter *)
-  (*   (fun (x, y) -> Printf.printf "Asteroid at (%d, %d)\n" x y) *)
-  (*   asteroids *)
-  intercepts (0, 0) (3, 6) (2, 4) |> string_of_bool |> print_endline
+  let input = Lib.get_input_lines "10" in
+  let asteroids = asteroids input in
+  let viewable = part_1 asteroids in
+  Printf.printf "Part 1: %d\n" (max_list viewable)
