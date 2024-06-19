@@ -71,8 +71,26 @@ let max_list = List.fold_left Int.max 0
 let part_1 asteroids =
   List.map (fun source -> count_viewable source asteroids) asteroids
 
+let angle_between (source_x, source_y) (dest_x, dest_y) =
+  let cx = float_of_int source_x in
+  let cy = float_of_int source_y in
+  let p0x = cx in
+  let p0y = cy +. 1.0 in
+  let p1x = float_of_int dest_x in
+  let p1y = float_of_int dest_y in
+  let p0c = Float.sqrt (((cx -. p0x) ** 2.0) +. ((cy -. p0y) ** 2.0)) in
+  let p1c = Float.sqrt (((cx -. p1x) ** 2.0) +. ((cy -. p1y) ** 2.0)) in
+  let p0p1 = Float.sqrt (((p1x -. p0x) ** 2.0) +. ((p1y -. p0y) ** 2.0)) in
+  let angle =
+    Float.acos
+      (((p1c *. p1c) +. (p0c *. p0c) -. (p0p1 *. p0p1)) /. (2.0 *. p1c *. p0c))
+  in
+  if dest_x - source_x >= 0 then angle else (2.0 *. Float.pi) -. angle
+
 let () =
-  let input = Lib.get_input_lines "10" in
-  let asteroids = asteroids input in
-  let viewable = part_1 asteroids in
-  Printf.printf "Part 1: %d\n" (max_list viewable)
+  (* let input = Lib.get_input_lines "10" in *)
+  (* let asteroids = asteroids input in *)
+  (* let viewable = part_1 asteroids in *)
+  (* Printf.printf "Part 1: %d\n" (max_list viewable) *)
+  Printf.printf "Angle: %f\n"
+    (angle_between (0, 0) (0, -1) *. (180.0 /. Float.pi))
