@@ -24,12 +24,21 @@ function isValid(level: number[]): boolean {
 }
 
 function isValidWithRemovable(level: number[]): boolean {
-  if (level[0] === level[1])
+  for (let i = 0; i < level.length; i++) {
+    const removed = [...level];
+    removed.splice(i, 1);
+    if (isValid(removed)) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
-const input = util.readInput("02");
+const input = util.readInput("02" );
 
 const levels = input.map((level) => level.split(" ").map((report) => +report));
 const part1 = levels.filter(isValid).length;
+const part2 = levels.filter(isValidWithRemovable).length;
 
-util.writeOutput(part1);
+util.writeOutput(part1, part2);
