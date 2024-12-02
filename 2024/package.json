@@ -2,7 +2,8 @@
   "name": "2024",
   "scripts": {
     "lint": "eslint src/**",
-    "day01": "ts-node src/01/index.ts"
+    "day01": "ts-node src/01/index.ts",
+    "day02": "ts-node src/02/index.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",

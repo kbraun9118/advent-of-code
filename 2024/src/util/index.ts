@@ -1,9 +1,16 @@
 import { readFileSync } from "fs";
 
 function readInput(day: string, isTest: boolean = false): string[] {
-  const file = isTest ? `./src/${day}/test.txt` : `../input/2024/${day}/input.txt`;
-  const contents = readFileSync(file).toString();
-  return contents.split("\n").filter(line => line !== '');
+  const file = isTest
+    ? `./src/${day}/test.txt`
+    : `../input/2024/${day}/input.txt`;
+  const lines = readFileSync(file).toString().split(/\r\n|\n/);
+
+  while (lines[lines.length - 1] === "") {
+    lines.pop();
+  }
+
+  return lines;
 }
 
 type Output = string | number;
