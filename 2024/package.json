@@ -1,6 +1,7 @@
 {
   "name": "2024",
   "scripts": {
+    "lint": "eslint src/**",
     "day01": "ts-node src/01/index.ts"
   },
   "devDependencies": {
