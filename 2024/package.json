@@ -3,7 +3,8 @@
   "scripts": {
     "lint": "eslint src/**",
     "day01": "ts-node src/01/index.ts",
-    "day02": "ts-node src/02/index.ts"
+    "day02": "ts-node src/02/index.ts",
+    "day03": "ts-node src/03/index.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
