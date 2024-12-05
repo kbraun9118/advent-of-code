@@ -44,17 +44,17 @@ func part1(offset int) int {
 }
 
 func part2(offset int) int {
-	circleBuffer := NewCircleBuffer(1)
-	cbIndex := 0
-
-	for i := 1; i < 50_000_001; i++ {
-		cbIndex += offset
-		cbIndex = circleBuffer.RealIndex(cbIndex)
-		circleBuffer.InsertAfter(cbIndex, i)
-		cbIndex++
+	index1 := -1
+	length := 1
+	index := 1
+	for i := range 50_000_001 {
+		index = ((index + offset) % length) + 1
+		length++
+		if index == 1 {
+			index1 = i + 1
+		}
 	}
-
-	return circleBuffer.Get(cbIndex + 1)
+	return index1
 }
 
 func main() {
