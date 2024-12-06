@@ -22,7 +22,7 @@ func ReadInputFile(day string) []string {
 
 	lines := string(content)
 
-	return strings.Split(strings.TrimSpace(lines), "\n")
+	return strings.Split(strings.ReplaceAll(strings.TrimSpace(lines), "\r\n", "\n"), "\n")
 }
 
 func ReadTestFile(day string) []string {
@@ -33,7 +33,7 @@ func ReadTestFile(day string) []string {
 
 	lines := string(content)
 
-	return strings.Split(strings.TrimSpace(lines), "\n")
+	return strings.Split(strings.ReplaceAll(strings.TrimSpace(lines), "\r\n", "\n"), "\n")
 }
 
 func PrintPart1(output any) {
