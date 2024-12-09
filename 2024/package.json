@@ -9,7 +9,8 @@
     "day05": "ts-node src/05/index.ts",
     "day06": "ts-node src/06/index.ts",
     "day07": "ts-node src/07/index.ts",
-    "day08": "ts-node src/08/index.ts"
+    "day08": "ts-node src/08/index.ts",
+    "day09": "ts-node src/09/index.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
