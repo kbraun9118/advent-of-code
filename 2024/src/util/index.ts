@@ -4,7 +4,9 @@ function readInput(day: string, isTest: boolean = false): string[] {
   const file = isTest
     ? `./src/${day}/test.txt`
     : `../input/2024/${day}/input.txt`;
-  const lines = readFileSync(file).toString().split(/\r\n|\n/);
+  const lines = readFileSync(file)
+    .toString()
+    .split(/\r\n|\n/);
 
   while (lines[lines.length - 1] === "") {
     lines.pop();
@@ -23,6 +25,12 @@ function writeOutput(part1: Output, part2?: Output) {
   }
 }
 
-const util = { readInput, writeOutput };
+export type Position = { x: number; y: number };
+
+function positionString(position: Position) {
+  return `(${position.x}, ${position.y})`;
+}
+
+const util = { readInput, writeOutput, positionString };
 
 export default util;
