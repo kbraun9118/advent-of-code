@@ -1,10 +1,4 @@
-import util from "../util";
-
-type Position = { x: number; y: number };
-
-function positionString({ x, y }: Position): string {
-  return `(${x}, ${y})`;
-}
+import util, { Position } from "../util";
 
 function calcAnitnodesPartOne(
   positionOne: Position,
@@ -82,7 +76,7 @@ function calcAntinodesForMap(
           mapSize,
         )) {
           if (calcInRange(antinode, mapSize)) {
-            positionSet.add(positionString(antinode));
+            positionSet.add(util.positionString(antinode));
           }
         }
       }

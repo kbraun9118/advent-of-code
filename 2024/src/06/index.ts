@@ -1,8 +1,7 @@
-import util from "../util";
+import util, { Position } from "../util";
 import cliProgress from 'cli-progress';
 
 type Lab = string[][];
-type Position = { x: number; y: number };
 const turn: Record<string, string> = { "^": ">", ">": "v", v: "<", "<": "^" };
 
 function step(
