@@ -31,6 +31,36 @@ function positionString(position: Position) {
   return `(${position.x}, ${position.y})`;
 }
 
-const util = { readInput, writeOutput, positionString };
+function batchWhile<T>(input: T[], condition: (item: T) => boolean): T[][] {
+  const output = [];
+  let current = [];
+  for (const item of input) {
+    if (condition(item)) {
+      current.push(item);
+    } else {
+      output.push(current);
+      current = [];
+    }
+  }
+  if (current.length !== 0) {
+    output.push(current);
+  }
+  return output;
+}
+
+function gcd(a: number, b: number): number {
+    const smaller = Math.min(a, b);
+    let hcf = 1;
+ 
+    for (let i = 1; i <= smaller; i++) {
+        if (a % i === 0 && b % i === 0) {
+            hcf = i;
+        }
+    }
+ 
+    return hcf;
+}
+
+const util = { readInput, writeOutput, positionString, batchWhile, gcd };
 
 export default util;
