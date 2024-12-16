@@ -74,12 +74,31 @@ class Garden {
     return perimeter;
   }
 
+  private tBase(neighbors: Position[]): Position {
+    if (
+      neighbors[0].x !== neighbors[1].x &&
+      neighbors[0].x !== neighbors[2].x &&
+      neighbors[0].y !== neighbors[1].y &&
+      neighbors[0].y !== neighbors[2].y
+    ) {
+      return neighbors[0];
+    }
+    if (
+      neighbors[1].x !== neighbors[0].x &&
+      neighbors[1].x !== neighbors[2].x &&
+      neighbors[1].y !== neighbors[0].y &&
+      neighbors[1].y !== neighbors[2].y
+    ) {
+      return neighbors[1];
+    }
+    return neighbors[2];
+  }
+
   private sides(regionIdx: number): number {
     const region = this.regions[regionIdx];
     const regionValue = this.map[region[0].y][region[0].x];
     let corners = 0;
     for (const plot of region) {
-      let cornerIncrease = 0;
       const neighbors = neighborDiffs
         .map((nDiff) => ({
           x: plot.x + nDiff.x,
@@ -90,8 +109,7 @@ class Garden {
         return 4;
       }
       if (neighbors.length === 1) {
-
-        cornerIncrease += 2;
+        corners += 2;
       }
       if (
         neighbors.length === 2 &&
@@ -102,9 +120,9 @@ class Garden {
           this.map[neighbors[0].y][neighbors[1].x] === regionValue &&
           this.map[neighbors[1].y][neighbors[0].x] === regionValue
         ) {
-          cornerIncrease += 1;
+          corners += 1;
         } else {
-          cornerIncrease += 2;
+          corners += 2;
         }
       }
       const diagonalNeighbors = diagonalDiff
@@ -114,19 +132,16 @@ class Garden {
         }))
         .filter((n) => this.map[n.y] && this.map[n.y][n.x] === regionValue);
       if (neighbors.length === 3) {
-        if (diagonalNeighbors.length === 0) {
-          cornerIncrease += 2;
-        } else {
-          cornerIncrease += 1;
-        }
+        const tBase = this.tBase(neighbors);
+        const diagonalTBaseNeighbors = diagonalNeighbors.filter(
+          (n) => n.x === tBase.x || n.y === tBase.y,
+        );
+        corners += 2 - diagonalTBaseNeighbors.length;
       }
       if (neighbors.length === 4) {
-        cornerIncrease += 4 - neighbors.length
+        corners += 4 - diagonalNeighbors.length;
       }
-      console.log(plot, cornerIncrease);
-      corners += cornerIncrease;
     }
-    console.log(regionValue, region, corners);
     return corners;
   }
 
@@ -147,7 +162,7 @@ class Garden {
   }
 }
 
-const input = util.readInput("12", true);
+const input = util.readInput("12");
 
 const garden = new Garden(input);
 
