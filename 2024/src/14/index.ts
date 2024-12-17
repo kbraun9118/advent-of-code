@@ -105,6 +105,15 @@ class RestRoom {
     return true;
   }
 
+  noOverlap(): boolean {
+    for (const robot of this.map) {
+      if (this.robotCount(robot.position) > 1) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   printMap(): void {
     for (let y = 0; y < this.height; y++) {
       let line = "";
@@ -135,11 +144,10 @@ function part1(restRoom: RestRoom): number {
 function part2(restRoom: RestRoom): number {
   let current = restRoom;
   let ticks = 0;
-  while (!current.allHaveNeighbors()) {
+  while (!current.noOverlap()) {
     current = current.tick();
     ticks++;
   }
-  current.printMap();
   return ticks;
 }
 
