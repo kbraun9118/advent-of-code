@@ -48,19 +48,6 @@ function batchWhile<T>(input: T[], condition: (item: T) => boolean): T[][] {
   return output;
 }
 
-function gcd(a: number, b: number): number {
-    const smaller = Math.min(a, b);
-    let hcf = 1;
- 
-    for (let i = 1; i <= smaller; i++) {
-        if (a % i === 0 && b % i === 0) {
-            hcf = i;
-        }
-    }
- 
-    return hcf;
-}
-
-const util = { readInput, writeOutput, positionString, batchWhile, gcd };
+const util = { readInput, writeOutput, positionString, batchWhile };
 
 export default util;
