@@ -31,6 +31,20 @@ function positionString(position: Position) {
   return `(${position.x}, ${position.y})`;
 }
 
+const positionDiffs = [
+  { x: 0, y: -1 },
+  { x: 0, y: 1 },
+  { x: -1, y: 0 },
+  { x: 1, y: 0 },
+];
+
+function neighbors(position: Position): Position[] {
+  return positionDiffs.map((p) => ({
+    x: position.x + p.x,
+    y: position.y + p.y,
+  }));
+}
+
 function batchWhile<T>(input: T[], condition: (item: T) => boolean): T[][] {
   const output = [];
   let current = [];
@@ -48,6 +62,6 @@ function batchWhile<T>(input: T[], condition: (item: T) => boolean): T[][] {
   return output;
 }
 
-const util = { readInput, writeOutput, positionString, batchWhile };
+const util = { readInput, writeOutput, positionString, batchWhile, neighbors };
 
 export default util;

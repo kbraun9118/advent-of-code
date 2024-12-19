@@ -16,7 +16,8 @@
     "day12": "ts-node src/12/index.ts",
     "day13": "ts-node src/13/index.ts",
     "day14": "ts-node src/14/index.ts",
-    "day15": "ts-node src/15/index.ts"
+    "day15": "ts-node src/15/index.ts",
+    "day16": "ts-node src/16/index.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
@@ -29,6 +30,7 @@
     "typescript-eslint": "^8.16.0"
   },
   "dependencies": {
+    "@datastructures-js/heap": "^4.3.3",
     "cli-progress": "^3.12.0"
   }
 }
