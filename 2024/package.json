@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "@datastructures-js/heap": "^4.3.3",
-    "cli-progress": "^3.12.0"
+    "cli-progress": "^3.12.0",
+    "json-stable-stringify": "^1.2.0"
   }
 }

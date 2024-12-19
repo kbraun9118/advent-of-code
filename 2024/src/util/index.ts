@@ -1,4 +1,5 @@
 import { readFileSync } from "fs";
+import stableStringify from "json-stable-stringify";
 
 function readInput(day: string, isTest: boolean = false): string[] {
   const file = isTest
@@ -29,6 +30,12 @@ export type Position = { x: number; y: number };
 
 function positionString(position: Position) {
   return `(${position.x}, ${position.y})`;
+}
+
+function parsePositionString(position: string): Position {
+  const matches = position.match(/\((\d+), (\d+)\)/)!;
+
+  return { x: +matches[1], y: +matches[2] };
 }
 
 const positionDiffs = [
@@ -62,6 +69,56 @@ function batchWhile<T>(input: T[], condition: (item: T) => boolean): T[][] {
   return output;
 }
 
-const util = { readInput, writeOutput, positionString, batchWhile, neighbors };
+export class HashMap<K extends object, V> {
+  private map: Map<string, V> = new Map();
+
+  constructor() {}
+
+  has(key: K): boolean {
+    return this.map.has(stableStringify(key)!);
+  }
+
+  get(key: K): V | undefined {
+    return this.map.get(stableStringify(key)!);
+  }
+
+  set(key: K, value: V): void {
+    this.map.set(stableStringify(key)!, value);
+  }
+
+  get size(): number {
+    return this.map.size;
+  }
+}
+
+export class HashSet<K extends object> {
+  private set: Set<string> = new Set();
+
+  constructor() {}
+
+  get size(): number {
+    return this.set.size;
+  }
+  has(key: K): boolean {
+    return this.set.has(stableStringify(key)!);
+  }
+
+  add(key: K): void {
+    this.set.add(stableStringify(key)!);
+  }
+
+  forEach(func: (key: K) => void): void {
+    this.set.forEach(k => func(JSON.parse(k)))
+  }
+}
+
+const util = {
+  readInput,
+  writeOutput,
+  positionString,
+  batchWhile,
+  neighbors,
+  parsePositionString,
+};
 
 export default util;
