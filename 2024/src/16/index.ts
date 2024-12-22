@@ -1,27 +1,18 @@
 import { MinHeap } from "@datastructures-js/heap";
-import util, { Position } from "../util";
+import util, { HashMap, HashSet, Position } from "../util";
 
 type Direction = "N" | "E" | "W" | "S";
 
 type Reindeer = {
   position: Position;
   facing: Direction;
+};
+
+type ReindeerCost = {
+  reindeer: Reindeer;
   cost: number;
 };
 
-function reindeerString(reindeer: Reindeer): string {
-  return `(${util.positionString(reindeer.position)}, ${reindeer.facing})`;
-}
-
-function parseReindeerString(reindeer: string): Reindeer {
-  const matches = reindeer.match(/\(\((\d+), (\d+)\), (\w)\)/)!;
-
-  return {
-    position: { x: +matches[1], y: +matches[2] },
-    facing: matches[3] as Direction,
-    cost: 0,
-  };
-}
 
 class Maze {
   private constructor(
@@ -60,95 +51,107 @@ class Maze {
       .filter((p) => this.map.has(util.positionString(p)));
   }
 
-  move(source: Reindeer, destination: Position): Reindeer {
+  move(
+    source: ReindeerCost,
+    destination: Position,
+  ): ReindeerCost {
     const positionDiff = {
-      x: source.position.x - destination.x,
-      y: source.position.y - destination.y,
+      x: source.reindeer.position.x - destination.x,
+      y: source.reindeer.position.y - destination.y,
     };
-    if (source.facing === "N" || source.facing === "S") {
+    if (source.reindeer.facing === "N" || source.reindeer.facing === "S") {
       if (positionDiff.x === 0) {
         return {
-          position: destination,
           cost: source.cost + 1,
-          facing: source.facing,
+          reindeer: {
+            position: destination,
+            facing: source.reindeer.facing,
+          },
         };
       }
 
       return {
-        position: destination,
         cost: source.cost + 1001,
-        facing: positionDiff.x < 0 ? "E" : "W",
+        reindeer: {
+          position: destination,
+          facing: positionDiff.x < 0 ? "E" : "W",
+        },
       };
     }
 
     if (positionDiff.y === 0) {
       return {
-        position: destination,
         cost: source.cost + 1,
-        facing: source.facing,
+        reindeer: {
+          position: destination,
+          facing: source.reindeer.facing,
+        },
       };
     }
     return {
-      position: destination,
       cost: source.cost + 1001,
-      facing: positionDiff.y < 0 ? "S" : "N",
+      reindeer: {
+        position: destination,
+        facing: positionDiff.y < 0 ? "S" : "N",
+      },
     };
   }
 
   lowestCost(): [number, number] {
-    const prev = new Map<string, Reindeer[]>();
-    const dist = new Map<string, number>();
-    const queue = new MinHeap<Reindeer>((r) => r.cost);
-    const startReindeer: Reindeer = {
-      position: this.start,
+    const prev = new HashMap<Reindeer, ReindeerCost[]>();
+    const dist = new HashMap<Reindeer, number>();
+    const queue = new MinHeap<ReindeerCost>((r) => r.cost);
+    const startReindeer: ReindeerCost = {
       cost: 0,
-      facing: "E",
+      reindeer: {
+        position: this.start,
+        facing: "E",
+      },
     };
     queue.push(startReindeer);
-    prev.set(reindeerString(startReindeer), []);
+    prev.set(startReindeer.reindeer, []);
 
     while (queue.size() > 0) {
       const current = queue.pop()!;
       if (
-        current.position.x === this.end.x &&
-        current.position.y === this.end.y
+        current.reindeer.position.x === this.end.x &&
+        current.reindeer.position.y === this.end.y
       ) {
         continue;
       }
 
-      for (const neighbor of this.neighbors(current.position)) {
+      for (const neighbor of this.neighbors(current.reindeer.position)) {
         const next = this.move(current, neighbor);
-        const nextReindeer = reindeerString(next);
-        if (dist.has(nextReindeer)) {
-          const nextDist = dist.get(nextReindeer)!;
+        if (dist.has(next.reindeer)) {
+          const nextDist = dist.get(next.reindeer)!;
           if (nextDist === next.cost) {
-            prev.get(nextReindeer)?.push(current);
+            prev.get(next.reindeer)?.push(current);
           }
           continue;
         } else {
-          prev.set(nextReindeer, [current]);
-          dist.set(nextReindeer, next.cost);
+          prev.set(next.reindeer, [current]);
+          dist.set(next.reindeer, next.cost);
         }
 
         queue.push(next);
       }
     }
 
-    const paths = new Set<string>();
+    const paths = new HashSet<Reindeer>();
     const endReindeer: Reindeer[] = (["N", "E", "W", "S"] as Direction[]).map(
-      (d) => ({ position: this.end, facing: d, cost: 0 }),
+      (d) => ({ position: this.end, facing: d }),
     );
     const minDistance = endReindeer
-      .map((r) => dist.get(reindeerString(r)))
+      .map((r) => dist.get(r))
       .filter((r) => r !== undefined)
       .reduce((acc, next) => Math.min(acc, next));
     const pathQueue = endReindeer.filter(
-      (r) => dist.get(reindeerString(r)) === minDistance,
+      (r) => dist.get(r) === minDistance,
     );
 
     while (pathQueue.length > 0) {
       const current = pathQueue.shift()!;
-      const prevPaths = prev.get(reindeerString(current))!;
+      const prevPaths = prev.get(current)!;
       if (
         current.position.x === this.start.x &&
         current.position.y === this.start.y
@@ -156,20 +159,18 @@ class Maze {
         continue;
       }
       for (const path of prevPaths) {
-        const pathString = reindeerString(path);
-        if (paths.has(pathString)) {
+        if (paths.has(path.reindeer)) {
           continue;
         }
-        paths.add(pathString);
-        pathQueue.push(path);
+        paths.add(path.reindeer);
+        pathQueue.push(path.reindeer);
       }
     }
 
     const output = new Set<string>();
     paths.forEach((p) =>
-      output.add(util.positionString(parseReindeerString(p).position)),
+      output.add(util.positionString(p.position)),
     );
-    this.printReindeerPath(output);
     return [minDistance, output.size + 1];
   }
 
@@ -191,7 +192,7 @@ class Maze {
   }
 }
 
-const input = util.readInput("16", true);
+const input = util.readInput("16");
 
 const maze = Maze.fromInput(input);
 
