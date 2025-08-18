@@ -13,7 +13,6 @@ type ReindeerCost = {
   cost: number;
 };
 
-
 class Maze {
   private constructor(
     public map: Set<string>,
@@ -51,10 +50,7 @@ class Maze {
       .filter((p) => this.map.has(util.positionString(p)));
   }
 
-  move(
-    source: ReindeerCost,
-    destination: Position,
-  ): ReindeerCost {
+  move(source: ReindeerCost, destination: Position): ReindeerCost {
     const positionDiff = {
       x: source.reindeer.position.x - destination.x,
       y: source.reindeer.position.y - destination.y,
@@ -145,9 +141,7 @@ class Maze {
       .map((r) => dist.get(r))
       .filter((r) => r !== undefined)
       .reduce((acc, next) => Math.min(acc, next));
-    const pathQueue = endReindeer.filter(
-      (r) => dist.get(r) === minDistance,
-    );
+    const pathQueue = endReindeer.filter((r) => dist.get(r) === minDistance);
 
     while (pathQueue.length > 0) {
       const current = pathQueue.shift()!;
@@ -168,9 +162,7 @@ class Maze {
     }
 
     const output = new Set<string>();
-    paths.forEach((p) =>
-      output.add(util.positionString(p.position)),
-    );
+    paths.forEach((p) => output.add(util.positionString(p.position)));
     return [minDistance, output.size + 1];
   }
 

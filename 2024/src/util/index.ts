@@ -86,6 +86,10 @@ export class HashMap<K extends object, V> {
     this.map.set(stableStringify(key)!, value);
   }
 
+  entries(): [K, V][] {
+    return [...this.map.entries()].map(([k, v]) => [JSON.parse(k), v]);
+  }
+
   get size(): number {
     return this.map.size;
   }
@@ -99,6 +103,7 @@ export class HashSet<K extends object> {
   get size(): number {
     return this.set.size;
   }
+
   has(key: K): boolean {
     return this.set.has(stableStringify(key)!);
   }
@@ -107,8 +112,12 @@ export class HashSet<K extends object> {
     this.set.add(stableStringify(key)!);
   }
 
+  values(): K[] {
+    return [...this.set.entries()].map((e) => JSON.parse(e[0]));
+  }
+
   forEach(func: (key: K) => void): void {
-    this.set.forEach(k => func(JSON.parse(k)))
+    this.set.forEach((k) => func(JSON.parse(k)));
   }
 }
 
@@ -119,6 +128,8 @@ const util = {
   batchWhile,
   neighbors,
   parsePositionString,
+  HashMap,
+  HashSet,
 };
 
 export default util;
