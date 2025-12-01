@@ -8,7 +8,7 @@ fn part_solve(input: Vec<String>) -> Result<(usize, usize), Error> {
         let sign = match i {
             _ if i.starts_with("L") => -1,
             _ if i.starts_with("R") => 1,
-            value => return Err(Error::from(format!("Invalid variant: {}", value))),
+            value => return Err(format!("Invalid variant: {}", value).into()),
         };
         let offset: usize = i.split_off(1).parse()?;
 
