@@ -11,7 +11,7 @@ pub fn read_input(day: &str) -> Result<Vec<String>, Error> {
     )
 }
 
-pub fn read_example_input(day: &str) -> Result<Vec<String>, Error> {
+pub fn read_input_example(day: &str) -> Result<Vec<String>, Error> {
     Ok(
         String::from_utf8(read(format!("examples/{}/input.txt", day))?)?
             .lines()
