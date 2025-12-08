@@ -1,4 +1,4 @@
-use aoc_2025::{Error, print_output, read_input_example};
+use aoc_2025::{Error, print_output, read_input, read_input_example};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 struct Position3 {
@@ -21,24 +21,22 @@ impl Position3 {
     }
 }
 
-fn min_distance_pair(coords: &Vec<Position3>) -> Option<(Position3, Position3)> {
-    let mut min_distance = isize::MAX;
-    let mut min_positions = None;
+fn min_distance_pairs(coords: &Vec<Position3>) -> Vec<(Position3, Position3, isize)> {
+    let mut out = Vec::new();
     for (i, left) in coords[..coords.len() - 1].iter().enumerate() {
         for right in &coords[i + 1..] {
             let current_distance = left.distance_from(*right);
-            if current_distance < min_distance {
-                min_distance = current_distance;
-                min_positions = Some((*left, *right))
-            }
+            out.push((*left, *right, current_distance));
         }
     }
 
-    min_positions
+    out.sort_by_key(|(_, _, k)| *k);
+
+    out
 }
 
 fn main() -> Result<(), Error> {
-    let input = read_input_example("08")?
+    let input = read_input("08")?
         .into_iter()
         .map(|s| {
             s.split(",")
@@ -50,6 +48,8 @@ fn main() -> Result<(), Error> {
         .map(|coords| Position3::new(coords[0], coords[1], coords[2]))
         .collect::<Vec<_>>();
 
-    print_output!(min_distance_pair(&input));
+    let distance_pairs = min_distance_pairs(&input);
+
+    print_output!(&distance_pairs[0..5]);
     Ok(())
 }
