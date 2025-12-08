@@ -93,24 +93,21 @@ fn part_2(input: &Vec<String>) -> Result<usize, Error> {
         // .zip(ops.chars().into_iter())
         .collect::<Result<Vec<_>, _>>()?;
 
-    let ops = ops.split_whitespace().collect::<Vec<_>>();
+    let ops = ops.split_whitespace().rev().collect::<Vec<_>>();
 
     let mut sum = 0;
-    let row_length = nums.get(0).map(|r| r.len()).unwrap_or_default();
-    for i in 0..row_length {
+    for (i, row) in nums.iter().enumerate() {
         let mut column_value = 0;
         let op = ops.get(i).ok_or("ops of incorrect length")?;
         if *op == "*" {
             column_value = 1;
         }
-        for row in &nums {
+        for item in row {
             if *op == "+" {
-                println!("adding: {}", row[i]);
-                column_value += row[i];
+                column_value += item;
             }
             if *op == "*" {
-                println!("multiplying: {}", row[i]);
-                column_value *= row[i];
+                column_value *= item;
             }
         }
         sum += column_value;
@@ -120,7 +117,7 @@ fn part_2(input: &Vec<String>) -> Result<usize, Error> {
 }
 
 fn main() -> Result<(), Error> {
-    let input = read_input_example("06")?;
+    let input = read_input("06")?;
 
     print_output!(part_1(&input)?, part_2(&input)?);
 

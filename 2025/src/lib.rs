@@ -32,3 +32,15 @@ macro_rules! print_output {
         println!("Part 1: {:?}\nPart 2: {:?}", $a, $b);
     };
 }
+
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
+pub struct Position {
+    pub x: usize,
+    pub y: usize,
+}
+
+impl Position {
+    pub fn new(x: usize, y: usize) -> Self {
+        Self { x, y }
+    }
+}
