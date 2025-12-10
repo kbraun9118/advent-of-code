@@ -1,4 +1,6 @@
-use aoc_2025::{Error, print_output, read_input, read_input_example};
+use std::{collections::HashMap, hash::Hash};
+
+use aoc_2025::{Error, print_output, read_input};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 struct Position3 {
@@ -35,6 +37,92 @@ fn min_distance_pairs(coords: &Vec<Position3>) -> Vec<(Position3, Position3, isi
     out
 }
 
+#[derive(Debug)]
+struct UnionFind {
+    parent: Vec<usize>,
+    size: Vec<usize>,
+}
+
+impl UnionFind {
+    fn new(n: usize) -> Self {
+        Self {
+            parent: (0..n).collect(),
+            size: vec![1; n],
+        }
+    }
+
+    fn find(&mut self, i: usize) -> usize {
+        if self.parent[i] != i {
+            self.parent[i] = self.find(self.parent[i]);
+        }
+        self.parent[i]
+    }
+
+    fn union(&mut self, a: usize, b: usize) {
+        let mut ra = self.find(a);
+        let mut rb = self.find(b);
+        if ra == rb {
+            return;
+        }
+
+        if self.size[ra] < self.size[rb] {
+            std::mem::swap(&mut ra, &mut rb);
+        }
+
+        self.parent[rb] = ra;
+        self.size[ra] += self.size[rb];
+    }
+}
+
+fn part_1(nodes: &Vec<Position3>, distance_pairs: &Vec<(Position3, Position3, isize)>) -> usize {
+    let mut indecies = HashMap::new();
+
+    for (i, &node) in nodes.iter().enumerate() {
+        indecies.insert(node, i);
+    }
+
+    let mut dsu = UnionFind::new(nodes.len());
+    for &(l, r, _) in &distance_pairs[..1000] {
+        let li = indecies[&l];
+        let ri = indecies[&r];
+        dsu.union(li, ri);
+    }
+
+    let mut out = HashMap::new();
+    for i in 0..nodes.len() {
+        let root = dsu.find(i);
+        out.insert(root, dsu.size[root]);
+    }
+
+    let mut lens = out.values().collect::<Vec<_>>();
+    lens.sort();
+    lens.reverse();
+
+    lens.into_iter().take(3).fold(1, |acc, &v| acc * v)
+}
+
+fn part_2(nodes: &Vec<Position3>, distance_pairs: &Vec<(Position3, Position3, isize)>) -> usize {
+    let mut indecies = HashMap::new();
+
+    for (i, &node) in nodes.iter().enumerate() {
+        indecies.insert(node, i);
+    }
+
+    let mut dsu = UnionFind::new(nodes.len());
+    for &(l, r, _) in distance_pairs {
+        let li = indecies[&l];
+        let ri = indecies[&r];
+        dsu.union(li, ri);
+        let current = dsu.find(0);
+
+        if (1..nodes.len()).map(|i| dsu.find(i)).all(|p| p == current) {
+            return l.x as usize * r.x as usize;
+        }
+    }
+
+    0
+}
+
 fn main() -> Result<(), Error> {
     let input = read_input("08")?
         .into_iter()
@@ -50,6 +138,9 @@ fn main() -> Result<(), Error> {
 
     let distance_pairs = min_distance_pairs(&input);
 
-    print_output!(&distance_pairs[0..5]);
+    print_output!(
+        part_1(&input, &distance_pairs),
+        part_2(&input, &distance_pairs)
+    );
     Ok(())
 }
